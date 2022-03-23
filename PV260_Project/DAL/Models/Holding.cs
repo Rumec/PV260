@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace DAL.Models
 {
-    public class Holding
+    /// <summary>
+    /// Represents single line of holding in csv file
+    /// </summary>
+    public class Holding : HoldingBaseInformation
     {
-        public string Fund { get; set; }
-        public string Company { get; set; }
-        public string Ticker { get; set; }
-        public string Shares { get; set; }
+        public long Shares { get; set; }
         public double MarketValue { get; set; }
         public double Weight { get; set; }
+        public string Currency { get; set; }
     }
 }

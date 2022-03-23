@@ -2,5 +2,4 @@
 
 using DAL;
 
-var loader = new DataLoader(",");
-loader.LoadCsvFile("/home/drumian/Documents/School/pv260/PV260/PV260_Project/PL/airtravel.csv");
+Console.WriteLine("Hello world!");
