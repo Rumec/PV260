@@ -15,5 +15,26 @@ namespace DAL.Models
         public double MarketValue { get; set; }
         public double Weight { get; set; }
         public string Currency { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (Holding) obj;
+            var other2 = (HoldingBaseInformation) other;
+            
+            return base.Equals(other2) &&
+                   !(Math.Abs(this.Shares - other.Shares) > 0.000001) &&
+                   !(Math.Abs(this.MarketValue - other.MarketValue) > 0.000001) &&
+                   !(Math.Abs(this.Weight - other.Weight) > 0.000001) &&
+                   this.Currency == other.Currency;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
