@@ -1,6 +1,7 @@
 using System;
 using BL.DataLoading;
 using DAL.Models;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Tests.BLTests;
@@ -30,7 +31,7 @@ public class CsvFileLoaderTests
     {
         var file = _testLoader.LoadCsvFile(_pathToFile);
         
-        Assert.That(file.Equals(_testFile));
+        file.Should().BeEquivalentTo(_testFile);
     }
     
 

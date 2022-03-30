@@ -15,24 +15,5 @@ namespace DAL.Models
         public string Company { get; set; }
         public string Ticker { get; set; }
         public string Cusip { get; set; }
-        
-        public override bool Equals(object? obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            HoldingBaseInformation other = (HoldingBaseInformation) obj;
-            
-            return this.Fund == other.Fund && 
-                   this.Company == other.Company && 
-                   this.Ticker == other.Ticker &&
-                   this.Cusip == other.Cusip;
-        }
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
     }
 }
