@@ -11,8 +11,4 @@
       <ProjectReference Include="..\DAL\DAL.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="FileHelpers" Version="3.5.1" />
-    </ItemGroup>
-
 </Project>
