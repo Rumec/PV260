@@ -12,5 +12,6 @@ namespace DAL.Models
         public long NumberOfShares { get; set; }
         public double DifferenceOfShares { get; set; }
         public double DifferenceOfWeight { get; set; }
+        public double MarketValueDifference { get; set; }
     }
 }
