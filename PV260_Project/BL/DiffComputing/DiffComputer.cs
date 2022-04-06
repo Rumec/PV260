@@ -51,7 +51,7 @@ public class DiffComputer : IDiffComputer
         {
             if (diff.Any(hc => hc.Holding.Company.Equals(holding.Company)))
                 continue;
-            var secondHolding = _second.Holdings.First(h => h.Company.Equals(h.Company));
+            var secondHolding = _second.Holdings.First(h => h.Company.Equals(holding.Company));
 
             diff.Add(new HoldingChanges
             {
