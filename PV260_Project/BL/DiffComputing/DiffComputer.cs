@@ -4,24 +4,19 @@ namespace BL.DiffComputing;
 
 public class DiffComputer : IDiffComputer
 {
-    private readonly CsvFile _first, _second;
-
-    public DiffComputer(CsvFile first, CsvFile second)
+    public List<HoldingChanges> ComputeDiff(CsvFile first, CsvFile second)
     {
-        _first = first;
-        _second = second;
-    }
-
-    public List<HoldingChanges> ComputeDiff()
-    {
+        ArgumentNullException.ThrowIfNull(first);
+        ArgumentNullException.ThrowIfNull(second);
+        
         var diff = new List<HoldingChanges>();
-        AddSymmetricDifference(_first, _second, ref diff);
+        AddSymmetricDifference(first, second, ref diff);
 
-        foreach (var holding in _first.Holdings)
+        foreach (var holding in first.Holdings)
         {
             if (diff.Any(hc => hc.Holding.Company.Equals(holding.Company)))
                 continue;
-            var secondHolding = _second.Holdings.First(h => h.Company.Equals(holding.Company));
+            var secondHolding = second.Holdings.First(h => h.Company.Equals(holding.Company));
 
             diff.Add(new HoldingChanges
             {

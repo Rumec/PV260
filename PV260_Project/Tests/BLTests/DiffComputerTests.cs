@@ -10,7 +10,31 @@ namespace Tests.BLTests;
 [TestFixture]
 public class DiffComputerTests
 {
-    private readonly List<string> _currencies = new() {"EUR", "USD", "CZK"};
+    private static readonly List<string> Currencies = new() {"EUR", "USD", "CZK"};
+
+    private static readonly CsvFile DummyCsvFile = CreateDummyCsvFile();
+    private static readonly CsvFile DummyCsvFileWithoutHoldings = CreateDummyCsvFile(false);
+
+    private static IEnumerable<TestCaseData> NullTestCases => new[]
+    {
+        new TestCaseData(DummyCsvFile, null).SetName("First CsvFile is null"),
+        new TestCaseData(null, DummyCsvFile).SetName("Second CsvFile is null"),
+        new TestCaseData(null, null).SetName("Both CsvFiles are null")
+    };
+
+    private static IEnumerable<TestCaseData> CsvFilesWithEmptyHoldingsTestCases =>
+        new[]
+        {
+            new TestCaseData(DummyCsvFile, DummyCsvFileWithoutHoldings, 1, true)
+                .SetName("Only first CsvFile has Holdings")
+                .SetDescription("Expected: diffs are negative, since particular holding was only in first CsvFile"),
+            new TestCaseData(DummyCsvFileWithoutHoldings, DummyCsvFile, 1, false)
+            .SetName("Only second CsvFile has Holdings")
+            .SetDescription("Expected: diffs are positive, since particular holding was only in second CsvFile"),
+            new TestCaseData(DummyCsvFileWithoutHoldings, DummyCsvFileWithoutHoldings, 0, false)
+                .SetName("Both CsvFiles without Holdings")
+                .SetDescription("Expected: none HoldingChange"),
+        };
 
     [Test]
     public void TestComputeDiff()
@@ -44,7 +68,7 @@ public class DiffComputerTests
             CreateHoldingChanges(holding5New, 555555L, 55, 5555555.5),
         };
 
-        var result = new DiffComputer(csv1, csv2).ComputeDiff();
+        var result = new DiffComputer().ComputeDiff(csv1, csv2);
 
         result.Should().NotBeEmpty()
             .And.NotContainNulls()
@@ -53,7 +77,44 @@ public class DiffComputerTests
             .And.BeEquivalentTo(changes);
     }
 
-    private Holding CreateHolding(int holdingIndex, long shares, double weight, double marketValue)
+    [Test]
+    [TestCaseSource(nameof(NullTestCases))]
+    public void TestComputeDiff_WhenCsvFileIsNull(CsvFile first, CsvFile second)
+    {
+        var act = () => new DiffComputer().ComputeDiff(first, second);
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    [TestCaseSource(nameof(CsvFilesWithEmptyHoldingsTestCases))]
+    public void TestComputeDiff_WhenCsvFileWithoutHoldings(CsvFile first, CsvFile second, int expectedHoldingsCount,
+        bool shouldBeNegative)
+    {
+        var result = new DiffComputer().ComputeDiff(first, second);
+        result.Should().HaveCount(expectedHoldingsCount);
+
+        if (expectedHoldingsCount > 0)
+            result.Should().AllSatisfy(x =>
+            {
+                (x.DifferenceOfShares < 0).Should().Be(shouldBeNegative);
+                (x.DifferenceOfWeight < 0).Should().Be(shouldBeNegative);
+                (x.MarketValueDifference < 0).Should().Be(shouldBeNegative);
+            });
+    }
+
+    private static CsvFile CreateDummyCsvFile(bool withHolding = true)
+    {
+        var csvFile = new CsvFile
+        {
+            Date = new DateTime(2022, 4, 4)
+        };
+        if (withHolding)
+            csvFile.Holdings = new List<Holding> {CreateHolding(1, 1000L, 10.0, 100000)};
+
+        return csvFile;
+    }
+
+    private static Holding CreateHolding(int holdingIndex, long shares, double weight, double marketValue)
     {
         return new Holding
         {
@@ -61,14 +122,14 @@ public class DiffComputerTests
             Cusip = "Cusip" + holdingIndex,
             Fund = "Fund" + holdingIndex,
             Ticker = "Ticker" + holdingIndex,
-            Currency = _currencies[holdingIndex % _currencies.Count],
+            Currency = Currencies[holdingIndex % Currencies.Count],
             Shares = shares,
             Weight = weight,
             MarketValue = marketValue
         };
     }
 
-    private HoldingChanges CreateHoldingChanges(Holding holding, long sharesDiff, double weightDiff,
+    private static HoldingChanges CreateHoldingChanges(Holding holding, long sharesDiff, double weightDiff,
         double marketValueDiff)
     {
         return new HoldingChanges
