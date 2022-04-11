@@ -15,13 +15,6 @@ public class DiffComputerTests
     private static readonly CsvFile DummyCsvFile = CreateDummyCsvFile();
     private static readonly CsvFile DummyCsvFileWithoutHoldings = CreateDummyCsvFile(false);
 
-    private static IEnumerable<TestCaseData> NullTestCases => new[]
-    {
-        new TestCaseData(DummyCsvFile, null).SetName("First CsvFile is null"),
-        new TestCaseData(null, DummyCsvFile).SetName("Second CsvFile is null"),
-        new TestCaseData(null, null).SetName("Both CsvFiles are null")
-    };
-
     private static IEnumerable<TestCaseData> CsvFilesWithEmptyHoldingsTestCases =>
         new[]
         {
@@ -75,14 +68,6 @@ public class DiffComputerTests
             .And.HaveSameCount(changes)
             .And.OnlyHaveUniqueItems()
             .And.BeEquivalentTo(changes);
-    }
-
-    [Test]
-    [TestCaseSource(nameof(NullTestCases))]
-    public void TestComputeDiff_WhenCsvFileIsNull(CsvFile first, CsvFile second)
-    {
-        var act = () => new DiffComputer().ComputeDiff(first, second);
-        act.Should().Throw<ArgumentNullException>();
     }
 
     [Test]

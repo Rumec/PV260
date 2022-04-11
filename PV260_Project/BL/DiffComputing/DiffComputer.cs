@@ -6,9 +6,6 @@ public class DiffComputer : IDiffComputer
 {
     public List<HoldingChanges> ComputeDiff(CsvFile first, CsvFile second)
     {
-        ArgumentNullException.ThrowIfNull(first);
-        ArgumentNullException.ThrowIfNull(second);
-        
         var diff = new List<HoldingChanges>();
         AddSymmetricDifference(first, second, ref diff);
 
