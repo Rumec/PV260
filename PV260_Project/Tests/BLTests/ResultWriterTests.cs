@@ -44,7 +44,7 @@ public class ResultWriterTests
     [Test]
     public void TestStringGenerator()
     {
-        string str = DiffStringGenerator.GenerateSeparatedString(_changes, _culture);
+        string str = DiffStringGenerator.GenerateSeparatedString(_changes, _culture, new DateTime(2022, 4, 12));
         Assert.AreEqual(str, _holdingsStr);
     }
 
