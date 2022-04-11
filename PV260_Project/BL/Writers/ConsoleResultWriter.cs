@@ -9,7 +9,8 @@ namespace BL.Writers
 {
     public class ConsoleResultWriter : IResultWriter
     {
-        public void Print(List<HoldingChanges> holdingChanges) {
+        public void Print(List<HoldingChanges> holdingChanges)
+        {
             throw new NotImplementedException();
         }
     }
