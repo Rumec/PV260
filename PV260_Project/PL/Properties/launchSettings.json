@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PL": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\marti\\source\\repos\\PV260\\PV260_Project\\Tests\\TestFiles\\csv_file_loader_test.csv C:\\Users\\marti\\source\\repos\\PV260\\PV260_Project\\Tests\\TestFiles\\csv_file_new.csv ,"
+    }
+  }
+}
