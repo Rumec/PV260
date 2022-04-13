@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Globalization;
+﻿using System.Globalization;
 using BL.DataLoading;
 using BL.DiffComputing;using BL.Writers;
 
@@ -18,7 +16,7 @@ string? outputFile = Environment.GetCommandLineArgs().Length == 5 ?
     Environment.GetCommandLineArgs()[4] : null;
 
 
-if (!File.Exists(inputFile) || !File.Exists(sndFile))
+if (!(File.Exists(inputFile) && File.Exists(sndFile)))
 {
     Console.WriteLine("Files don't exist!");
     return;
