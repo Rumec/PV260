@@ -36,7 +36,7 @@ public class CsvFileLoader : IDataLoader
         _delimiter = delimiter;
     }
 
-    public CsvFile LoadCsvFile(string path) {
+    public DataSet LoadCsvFile(string path) {
         var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = _delimiter, BadDataFound = null, MissingFieldFound = null};
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, config);
@@ -48,12 +48,12 @@ public class CsvFileLoader : IDataLoader
         return GetCsvFile(lines);
     }
 
-    private CsvFile GetCsvFile(IEnumerable<CsvLine> csvLines) {
-        var file = new CsvFile();
-        if (csvLines.Any())
-            file.Date = csvLines.ElementAt(0).Date.GetDateTime();
+    private DataSet GetCsvFile(IEnumerable<CsvLine> dataLines) {
+        var file = new DataSet();
+        if (dataLines.Any())
+            file.Date = dataLines.ElementAt(0).Date.GetDateTime();
 
-        foreach (var csvLine in csvLines) {
+        foreach (var csvLine in dataLines) {
             var holding = new Holding();
             holding.Fund = csvLine.Fund;
             holding.Company = csvLine.Company;

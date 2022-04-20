@@ -9,7 +9,7 @@ namespace Tests.BLTests;
 [TestFixture]
 public class CsvFileLoaderTests
 {
-    private CsvFile _testFile;
+    private DataSet _testFile;
     private CsvFileLoader _testLoader;
     private string _pathToFile;
     
@@ -18,7 +18,7 @@ public class CsvFileLoaderTests
     {
         _testLoader = new CsvFileLoader(",");
         _pathToFile = "../../../TestFiles/csv_file_loader_test.csv";
-        _testFile = new CsvFile();
+        _testFile = new DataSet();
         _testFile.Date = new DateTime(2022, 3, 21);
         _testFile.Holdings.Add(CreateTeslaHolding());
         _testFile.Holdings.Add(CreateHealthHolding());

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using BL.DataLoading;
-using BL.DiffComputing;using BL.Writers;
+using BL.DiffComputing;
+using BL.Writers;
 
 
 if (Environment.GetCommandLineArgs().Length < 4 || Environment.GetCommandLineArgs().Length > 5)
@@ -12,8 +13,7 @@ if (Environment.GetCommandLineArgs().Length < 4 || Environment.GetCommandLineArg
 string inputFile = Environment.GetCommandLineArgs()[1];
 string sndFile = Environment.GetCommandLineArgs()[2];
 string delim = Environment.GetCommandLineArgs()[3];
-string? outputFile = Environment.GetCommandLineArgs().Length == 5 ?
-    Environment.GetCommandLineArgs()[4] : null;
+string? outputFile = Environment.GetCommandLineArgs().Length == 5 ? Environment.GetCommandLineArgs()[4] : null;
 
 
 if (!(File.Exists(inputFile) && File.Exists(sndFile)))
