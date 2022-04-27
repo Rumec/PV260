@@ -36,7 +36,7 @@ namespace BL.Writers
             }
             catch (Exception e)
             {
-                throw new DataWriterException("Error while writing data to file", e);
+                throw new DataWriterException($"Error while writing data to file '{_filePath}'", e);
             }
         }
     }

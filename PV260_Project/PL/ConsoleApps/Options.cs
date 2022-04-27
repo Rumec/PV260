@@ -8,13 +8,13 @@ namespace PL.ConsoleApps
     public class Options
     {
         [Option('d', "delim", Required = true, HelpText = "Set the delimiter of CSV files.")]
-        public string Delim { get; set; }
+        public string Delim { get; set; } = "";
         
         // currently we provided input file paths as "file1_path,file2_path,...,fileN_path" - separated by comma
         // it would also be possible to create flags e.g. '--first' and '--second' for only two input files
         [Option('i', "input", Min = 2, Max = 2, Separator = ',', Required = true,
             HelpText = "Set the paths of two input CSV files, which you want to compare.")]
-        public IEnumerable<String> InputFiles { get; set; }
+        public IEnumerable<String> InputFiles { get; set; } = new List<string>();
         
         public List<String> InputFilesList
         {
