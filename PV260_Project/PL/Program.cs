@@ -6,11 +6,8 @@ namespace PL
     {
         public static void Main()
         {
-            // var consoleApp = new ConsoleApp();
-            // consoleApp.Run();
-
-            var consoleAppImproved = new ConsoleAppImproved();
-            consoleAppImproved.Run();
+            var consoleApp = new ConsoleApp();
+            consoleApp.Run();
         }
     }
 }
