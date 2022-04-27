@@ -1,6 +1,8 @@
 using System.Globalization;
 using BL.DataLoading;
-using BL.DiffComputing;using BL.Writers;
+using BL.DiffComputing;
+using BL.Logging;
+using BL.Writers;
 using CommandLine;
 
 namespace PL.ConsoleApps
@@ -10,6 +12,7 @@ namespace PL.ConsoleApps
         private readonly IDataLoader? _dataLoader;
         private readonly IResultWriter? _resultWriter;
         private readonly IDiffComputer _diffComputer = new DiffComputer();
+        private readonly ILogger _logger = new ConsoleLogger();
         private readonly Options? _options;
         
         public ConsoleAppImproved()
@@ -44,7 +47,7 @@ namespace PL.ConsoleApps
             // TODO: should use 'our' generic exception (that covers errors for reading from disk, loading/fetching from web etc.) ?
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.Log(e.Message);
                 throw;
             }
         }
@@ -56,11 +59,7 @@ namespace PL.ConsoleApps
         
         private bool AreOptionsValid(Options o)
         {
-            // delimiter can be any string?
-            // outputFile can be any string?
             var inputFiles = o.InputFilesList;
-
-            // Count = 2 is assured by Options.InputFiles (otherwise parse error), therefore useless 'if' - should remove ?
             if (inputFiles.Count != 2)
             {
                 Console.WriteLine("You need to specify exactly TWO input CSV files.");
@@ -86,9 +85,16 @@ namespace PL.ConsoleApps
             return true;
         } 
         
-        private Options? HandleParseError(IEnumerable<Error> errors)
+        private Options? HandleParseError(IEnumerable<Error> errs)
         {
-            Console.WriteLine($"errors {errors.Count()}");
+            var errors = errs.ToList();
+            Console.WriteLine($"errors: {errors.Count}");
+            _logger.Log($"CommandLineParser - {errors.Count} errors:");
+            foreach (var e in errors)
+            {
+                _logger.Log($" - Error: {e.ToString() ?? "CommandLine." + e.Tag}");
+            }
+            
             return null;
         }
     }
