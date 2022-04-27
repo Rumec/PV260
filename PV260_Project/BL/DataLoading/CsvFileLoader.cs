@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using BL.Exceptions;
 using BL.Extensions;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -41,11 +42,18 @@ public class CsvFileLoader : IDataLoader
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, config);
 
-        csv.Read();
-        csv.ReadHeader();
-
-        var lines = csv.GetRecords<CsvLine>().Where(x => !string.IsNullOrEmpty(x.Company)).ToList();
-        return GetCsvFile(lines);
+        try
+        {
+            csv.Read();
+            csv.ReadHeader();
+            
+            var lines = csv.GetRecords<CsvLine>().Where(x => !string.IsNullOrEmpty(x.Company)).ToList();
+            return GetCsvFile(lines);
+        }
+        catch (Exception e)
+        {
+            throw new DataLoaderException("Error while loading csv file", e);
+        }
     }
 
     private CsvFile GetCsvFile(IEnumerable<CsvLine> csvLines) {

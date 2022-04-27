@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BL.Exceptions;
 using DAL.Models;
 
 namespace BL.Writers
@@ -26,9 +27,16 @@ namespace BL.Writers
 
         public void Print(List<HoldingChanges> holdingChanges)
         {
-            using (StreamWriter outputFile = new StreamWriter(_filePath))
+            try
             {
-                outputFile.Write(DiffStringGenerator.GenerateSeparatedString(holdingChanges, _info, _date, _separator));
+                using (StreamWriter outputFile = new StreamWriter(_filePath))
+                {
+                    outputFile.Write(DiffStringGenerator.GenerateSeparatedString(holdingChanges, _info, _date, _separator));
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataWriterException("Error while writing data to file", e);
             }
         }
     }
