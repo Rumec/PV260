@@ -1,6 +1,7 @@
 using System.Globalization;
 using BL.DataLoading;
 using BL.DiffComputing;
+using BL.Exceptions;
 using BL.Logging;
 using BL.Writers;
 using CommandLine;
@@ -36,7 +37,7 @@ namespace PL.ConsoleApps
             {
                 return;
             }
-            
+
             try
             {
                 var fstParsedFile = _dataLoader.LoadCsvFile(_options.InputFilesList[0]);
@@ -44,11 +45,15 @@ namespace PL.ConsoleApps
                 var changes = _diffComputer.ComputeDiff(fstParsedFile, sndParsedFile);
                 _resultWriter.Print(changes);
             }
-            // TODO: should use 'our' generic exception (that covers errors for reading from disk, loading/fetching from web etc.) ?
-            catch (Exception e)
+            catch (DataLoaderException e)
             {
+                Console.WriteLine($"Couldn't load a file: {e.Message}.");
                 _logger.Log(e.Message);
-                throw;
+            }
+            catch (DataWriterException e)
+            {
+                Console.WriteLine($"Couldn't write to a file: {e.Message}.");
+                _logger.Log(e.Message);
             }
         }
         

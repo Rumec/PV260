@@ -52,7 +52,7 @@ public class CsvFileLoader : IDataLoader
         }
         catch (Exception e)
         {
-            throw new DataLoaderException("Error while loading csv file", e);
+            throw new DataLoaderException($"Error while loading csv file '{path}'", e);
         }
     }
 
