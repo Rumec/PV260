@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BL.Exceptions;
-using DAL.Models;
+using BusinessLayer.Exceptions;
+using DataLayer.Models;
 
-namespace BL.Writers
+namespace BusinessLayer.Writers
 {
     public class FileResultWriter : IResultWriter
     {

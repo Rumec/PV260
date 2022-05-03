@@ -1,31 +1,31 @@
 ﻿using System.Globalization;
-using BL.Exceptions;
-using BL.Extensions;
+using BusinessLayer.Extensions;
+using BusinessLayer.Exceptions;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.DataLoading;
+namespace BusinessLayer.DataLoading;
 
 public class CsvLine
 {
     [Name("date")]
-    public string Date { get; set; }
+    public string? Date { get; set; }
     [Name("fund")]
-    public string Fund { get; set; }
+    public string? Fund { get; set; }
     [Name("company")]
-    public string Company { get; set; }
+    public string? Company { get; set; }
     [Name("ticker")]
-    public string Ticker { get; set; }
+    public string? Ticker { get; set; }
     [Name("cusip")]
-    public string Cusip { get; set; }
+    public string? Cusip { get; set; }
     [Name("shares")]
-    public string Shares { get; set; }
+    public string? Shares { get; set; }
     [Name("market value ($)")]
-    public string MarketValue { get; set; }
+    public string? MarketValue { get; set; }
     [Name("weight (%)")]
-    public string Weight { get; set; }
+    public string? Weight { get; set; }
 }
 
 public class CsvFileLoader : IDataLoader
@@ -67,11 +67,11 @@ public class CsvFileLoader : IDataLoader
             holding.Company = csvLine.Company;
             holding.Ticker = csvLine.Ticker;
             holding.Cusip = csvLine.Cusip;
-            holding.Shares = long.Parse(csvLine.Shares.Replace(",", ""));
-            csvLine.MarketValue.GetCurrencyAndValue().Deconstruct(out var currency, out var value);
+            holding.Shares = long.Parse(csvLine.Shares!.Replace(",", ""));
+            csvLine.MarketValue!.GetCurrencyAndValue().Deconstruct(out var currency, out var value);
             holding.Currency = currency;
             holding.MarketValue = value;
-            holding.Weight = double.Parse(csvLine.Weight.Remove(csvLine.Weight.Length - 1), CultureInfo.InvariantCulture);
+            holding.Weight = double.Parse(csvLine.Weight!.Remove(csvLine.Weight.Length - 1), CultureInfo.InvariantCulture);
             file.Holdings.Add(holding);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace DAL.Models
+﻿namespace DataLayer.Models
 {
     /// <summary>
     /// Represents single line of holding in csv file

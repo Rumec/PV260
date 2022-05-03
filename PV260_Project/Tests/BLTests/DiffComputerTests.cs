@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BL.DiffComputing;
-using DAL.Models;
+using BusinessLayer.DiffComputing;
+using DataLayer.Models;
 using FluentAssertions;
 using NUnit.Framework;
 

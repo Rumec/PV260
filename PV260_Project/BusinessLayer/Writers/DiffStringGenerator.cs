@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DAL.Models;
+﻿using System.Globalization;
+using DataLayer.Models;
 
-namespace BL.Writers
+namespace BusinessLayer.Writers
 {
     public static class DiffStringGenerator
     {

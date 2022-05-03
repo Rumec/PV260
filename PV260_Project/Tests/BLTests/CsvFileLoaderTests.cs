@@ -1,6 +1,6 @@
 using System;
-using BL.DataLoading;
-using DAL.Models;
+using BusinessLayer.DataLoading;
+using DataLayer.Models;
 using FluentAssertions;
 using NUnit.Framework;
 

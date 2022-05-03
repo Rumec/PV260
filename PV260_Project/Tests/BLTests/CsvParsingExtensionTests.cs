@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using BL.Extensions;
-using DAL.Models;
+using BusinessLayer.Extensions;
+using DataLayer.Models;
 using NUnit.Framework;
 
 namespace Tests.BLTests;

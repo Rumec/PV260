@@ -1,4 +1,4 @@
-﻿namespace DAL.Models
+﻿namespace DataLayer.Models
 {
     /// <summary>
     /// Represents a data item, which is downloaded at https://ark-funds.com/funds/arkk/

@@ -1,6 +1,6 @@
-﻿using DAL.Models;
+﻿using DataLayer.Models;
 
-namespace BL.DiffComputing;
+namespace BusinessLayer.DiffComputing;
 
 public class DiffComputer : IDiffComputer
 {
@@ -11,9 +11,9 @@ public class DiffComputer : IDiffComputer
 
         foreach (var holding in first.Holdings)
         {
-            if (diff.Any(hc => hc.Holding.Company.Equals(holding.Company)))
+            if (diff.Any(hc => hc.Holding!.Company!.Equals(holding.Company)))
                 continue;
-            var secondHolding = second.Holdings.First(h => h.Company.Equals(holding.Company));
+            var secondHolding = second.Holdings.First(h => h.Company!.Equals(holding.Company));
 
             diff.Add(new HoldingChanges
             {
