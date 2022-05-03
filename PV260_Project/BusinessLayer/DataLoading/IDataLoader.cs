@@ -9,5 +9,5 @@ public interface IDataLoader
     /// </summary>
     /// <param name="path">Path to the CSV</param>
     /// <returns>Object which represents the file</returns>
-    public CsvFile LoadCsvFile(string path);
+    public DataSet LoadCsvFile(string path);
 }

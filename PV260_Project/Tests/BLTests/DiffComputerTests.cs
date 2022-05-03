@@ -12,19 +12,19 @@ public class DiffComputerTests
 {
     private static readonly List<string> Currencies = new() {"EUR", "USD", "CZK"};
 
-    private static readonly CsvFile DummyCsvFile = CreateDummyCsvFile();
-    private static readonly CsvFile DummyCsvFileWithoutHoldings = CreateDummyCsvFile(false);
+    private static readonly DataSet DummyDataSet = CreateDummyCsvFile();
+    private static readonly DataSet DummyDataSetWithoutHoldings = CreateDummyCsvFile(false);
 
     private static IEnumerable<TestCaseData> CsvFilesWithEmptyHoldingsTestCases =>
         new[]
         {
-            new TestCaseData(DummyCsvFile, DummyCsvFileWithoutHoldings, 1, true)
+            new TestCaseData(DummyDataSet, DummyDataSetWithoutHoldings, 1, true)
                 .SetName("Only first CsvFile has Holdings")
                 .SetDescription("Expected: diffs are negative, since particular holding was only in first CsvFile"),
-            new TestCaseData(DummyCsvFileWithoutHoldings, DummyCsvFile, 1, false)
+            new TestCaseData(DummyDataSetWithoutHoldings, DummyDataSet, 1, false)
             .SetName("Only second CsvFile has Holdings")
             .SetDescription("Expected: diffs are positive, since particular holding was only in second CsvFile"),
-            new TestCaseData(DummyCsvFileWithoutHoldings, DummyCsvFileWithoutHoldings, 0, false)
+            new TestCaseData(DummyDataSetWithoutHoldings, DummyDataSetWithoutHoldings, 0, false)
                 .SetName("Both CsvFiles without Holdings")
                 .SetDescription("Expected: none HoldingChange"),
         };
@@ -41,12 +41,12 @@ public class DiffComputerTests
         var holding4New = CreateHolding(4, 4444L, 44.44, 1234567.89);
         var holding5New = CreateHolding(5, 555555L, 55, 5555555.5);
 
-        var csv1 = new CsvFile
+        var csv1 = new DataSet
         {
             Date = new DateTime(2022, 4, 4),
             Holdings = new List<Holding> {holding1, holding2, holding3}
         };
-        var csv2 = new CsvFile
+        var csv2 = new DataSet
         {
             Date = new DateTime(2022, 5, 5),
             Holdings = new List<Holding> {holding1New, holding3New, holding4New, holding5New}
@@ -72,7 +72,7 @@ public class DiffComputerTests
 
     [Test]
     [TestCaseSource(nameof(CsvFilesWithEmptyHoldingsTestCases))]
-    public void TestComputeDiff_WhenCsvFileWithoutHoldings(CsvFile first, CsvFile second, int expectedHoldingsCount,
+    public void TestComputeDiff_WhenCsvFileWithoutHoldings(DataSet first, DataSet second, int expectedHoldingsCount,
         bool shouldBeNegative)
     {
         var result = new DiffComputer().ComputeDiff(first, second);
@@ -87,9 +87,9 @@ public class DiffComputerTests
             });
     }
 
-    private static CsvFile CreateDummyCsvFile(bool withHolding = true)
+    private static DataSet CreateDummyCsvFile(bool withHolding = true)
     {
-        var csvFile = new CsvFile
+        var csvFile = new DataSet
         {
             Date = new DateTime(2022, 4, 4)
         };

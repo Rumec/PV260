@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DAL.Models
+﻿namespace DAL.Models
 {
     /// <summary>
     /// These are the data, which do not change in time (at least I think)
@@ -19,7 +13,6 @@ namespace DAL.Models
         public static string GetHeaderString(string separator = ",")
         {
             return "fund" + separator + "company" + separator + "ticker" + separator + "cusip";
-
         }
 
         public string ToString(string separator = ",")

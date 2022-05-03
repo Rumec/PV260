@@ -4,7 +4,7 @@ namespace BL.DiffComputing;
 
 public class DiffComputer : IDiffComputer
 {
-    public List<HoldingChanges> ComputeDiff(CsvFile first, CsvFile second)
+    public List<HoldingChanges> ComputeDiff(DataSet first, DataSet second)
     {
         var diff = new List<HoldingChanges>();
         AddSymmetricDifference(first, second, ref diff);
@@ -28,14 +28,14 @@ public class DiffComputer : IDiffComputer
         return diff;
     }
 
-    private void AddSymmetricDifference(CsvFile first, CsvFile second,
+    private void AddSymmetricDifference(DataSet first, DataSet second,
         ref List<HoldingChanges> diff)
     {
         diff.AddRange(CalculateRelativeComplement(first, second, false));
         diff.AddRange(CalculateRelativeComplement(second, first, true));
     }
 
-    private IEnumerable<HoldingChanges> CalculateRelativeComplement(CsvFile a, CsvFile b, bool expectsNegativeDiffs)
+    private IEnumerable<HoldingChanges> CalculateRelativeComplement(DataSet a, DataSet b, bool expectsNegativeDiffs)
     {
         var sign = expectsNegativeDiffs ? -1 : 1;
         return b.Holdings

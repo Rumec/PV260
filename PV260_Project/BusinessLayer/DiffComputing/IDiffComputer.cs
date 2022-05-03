@@ -8,5 +8,5 @@ public interface IDiffComputer
     /// Computes the diff between two files
     /// </summary>
     /// <returns>Returns list of changes in holdings</returns>
-    public List<HoldingChanges> ComputeDiff(CsvFile first, CsvFile second);
+    public List<HoldingChanges> ComputeDiff(DataSet first, DataSet second);
 }
