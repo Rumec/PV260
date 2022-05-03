@@ -1,6 +1,6 @@
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.DataLoading;
+namespace BusinessLayer.DataLoading;
 
 public interface IDataLoader
 {

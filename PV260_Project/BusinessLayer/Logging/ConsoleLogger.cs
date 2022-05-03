@@ -1,4 +1,4 @@
-namespace BL.Logging;
+namespace BusinessLayer.Logging;
 
 public class ConsoleLogger : ILogger
 {

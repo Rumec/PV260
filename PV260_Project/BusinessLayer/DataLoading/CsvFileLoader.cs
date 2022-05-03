@@ -1,12 +1,12 @@
 ﻿using System.Globalization;
-using BL.Exceptions;
-using BL.Extensions;
+using BusinessLayer.Extensions;
+using BusinessLayer.Exceptions;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.DataLoading;
+namespace BusinessLayer.DataLoading;
 
 public class CsvLine
 {

@@ -1,4 +1,4 @@
-﻿namespace DAL.Models
+﻿namespace DataLayer.Models
 {
     /// <summary>
     /// These are the data, which do not change in time (at least I think)

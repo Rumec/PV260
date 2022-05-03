@@ -1,6 +1,6 @@
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.Writers;
+namespace BusinessLayer.Writers;
 
 public interface IResultWriter
 {

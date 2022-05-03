@@ -1,6 +1,6 @@
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.DiffComputing;
+namespace BusinessLayer.DiffComputing;
 
 public interface IDiffComputer
 {

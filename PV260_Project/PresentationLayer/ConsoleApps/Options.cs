@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace PL.ConsoleApps
+namespace PresentationLayer.ConsoleApps
 {
     /// <summary>
     /// Class used by CommandLineParser for parsing command line arguments

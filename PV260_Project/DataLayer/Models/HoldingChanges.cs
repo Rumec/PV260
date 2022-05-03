@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace DAL.Models
+namespace DataLayer.Models
 {
     public class HoldingChanges
     {

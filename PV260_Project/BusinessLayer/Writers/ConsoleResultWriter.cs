@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using DAL.Models;
+using DataLayer.Models;
 
-namespace BL.Writers
+namespace BusinessLayer.Writers
 {
     public class ConsoleResultWriter : IResultWriter
     {

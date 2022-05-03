@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using BL.DataLoading;
-using BL.Writers;
-using DAL.Models;
+using BusinessLayer.DataLoading;
+using BusinessLayer.Writers;
+using DataLayer.Models;
 using FluentAssertions;
 using NUnit.Framework;
 

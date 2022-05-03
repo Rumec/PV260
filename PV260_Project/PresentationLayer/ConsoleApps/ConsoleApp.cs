@@ -1,12 +1,12 @@
 using System.Globalization;
-using BL.DataLoading;
-using BL.DiffComputing;
-using BL.Exceptions;
-using BL.Logging;
-using BL.Writers;
+using BusinessLayer.DataLoading;
+using BusinessLayer.DiffComputing;
+using BusinessLayer.Exceptions;
+using BusinessLayer.Logging;
+using BusinessLayer.Writers;
 using CommandLine;
 
-namespace PL.ConsoleApps
+namespace PresentationLayer.ConsoleApps
 {
     public class ConsoleApp : IApp
     {

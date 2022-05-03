@@ -1,4 +1,4 @@
-namespace BL.Exceptions;
+namespace BusinessLayer.Exceptions;
 
 [Serializable]
 public class DataWriterException : Exception

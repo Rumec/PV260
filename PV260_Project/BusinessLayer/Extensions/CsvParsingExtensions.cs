@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace BL.Extensions
+namespace BusinessLayer.Extensions
 {
     public static class CsvParsingExtensions
     {

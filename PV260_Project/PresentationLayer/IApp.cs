@@ -1,4 +1,4 @@
-namespace PL;
+namespace PresentationLayer;
 
 public interface IApp
 {
