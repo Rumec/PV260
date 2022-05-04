@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PresentationLayer.ConsoleApps;
+using DataLayer;
 
 namespace PresentationLayer
 {
@@ -12,8 +14,6 @@ namespace PresentationLayer
             var args = Environment.GetCommandLineArgs();
             var host = CreateHostBuilder(args).Build();
             host.Services.GetRequiredService<Program>().Run();
-            var consoleApp = new ConsoleApp();
-            consoleApp.Run();
         }
 
         public Program(IApp app) {
@@ -30,6 +30,7 @@ namespace PresentationLayer
                 {
                     services.AddTransient<Program>();
                     services.AddTransient<IApp, ConsoleApp>();
+                    services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\DataLayer\\app.db"));
                 });
         }
     }
