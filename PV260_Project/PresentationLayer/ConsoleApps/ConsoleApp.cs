@@ -2,22 +2,23 @@ using System.Globalization;
 using BusinessLayer.DataLoading;
 using BusinessLayer.DiffComputing;
 using BusinessLayer.Exceptions;
-using BusinessLayer.Logging;
 using BusinessLayer.Writers;
 using CommandLine;
+using Microsoft.Extensions.Logging;
 
 namespace PresentationLayer.ConsoleApps
 {
     public class ConsoleApp : IApp
     {
+        private readonly ILogger<ConsoleApp> _logger;
         private readonly IDataLoader? _dataLoader;
         private readonly IResultWriter? _resultWriter;
         private readonly IDiffComputer _diffComputer = new DiffComputer();
-        private readonly ILogger _logger = new ConsoleLogger();
         private readonly Options? _options;
         
-        public ConsoleApp()
+        public ConsoleApp(ILogger<ConsoleApp> logger)
         {
+            _logger = logger;
             var args = Environment.GetCommandLineArgs();
             _options = Parser.Default.ParseArguments<Options>(args).MapResult(ValidateOptions, HandleParseError);
             if (_options == null)
@@ -48,12 +49,12 @@ namespace PresentationLayer.ConsoleApps
             catch (DataLoaderException e)
             {
                 Console.WriteLine($"Couldn't load a file: {e.Message}.");
-                _logger.Log(e.Message);
+                _logger.LogError(e.Message);
             }
             catch (DataWriterException e)
             {
                 Console.WriteLine($"Couldn't write to a file: {e.Message}.");
-                _logger.Log(e.Message);
+                _logger.LogError(e.Message);
             }
         }
         
@@ -94,10 +95,10 @@ namespace PresentationLayer.ConsoleApps
         {
             var errors = errs.ToList();
             Console.WriteLine($"errors: {errors.Count}");
-            _logger.Log($"CommandLineParser - {errors.Count} errors:");
+            _logger.LogError($"CommandLineParser - {errors.Count} errors:");
             foreach (var e in errors)
             {
-                _logger.Log($" - Error: {e.ToString() ?? "CommandLine." + e.Tag}");
+                _logger.LogError($" - Error: {e.ToString() ?? "CommandLine." + e.Tag}");
             }
             
             return null;
