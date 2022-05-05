@@ -9,9 +9,9 @@ namespace BusinessLayer.Services
 {
     public interface IDataSetService
     {
-        List<DataSet> GetAllDataSets();
-        DataSet GetDataSetById(int id);
-        void CreateDataSet(DataSet dataSet);
-        void DeleteDataSet(int id);
+        Task<List<DataSet>> GetAllDataSets();
+        Task<DataSet> GetDataSetById(int id);
+        Task CreateDataSet(DataSet dataSet);
+        Task DeleteDataSet(int id);
     }
 }

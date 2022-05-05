@@ -7,10 +7,10 @@ using DataLayer.Models;
 
 namespace BusinessLayer.Services
 {
-    public interface IEmailService
+    public interface IUserEmailService
     {
-        void RegisterNewEmail(string emailAddress);
-        List<Email> GetAllRegisteredEmails();
-        void RemoveEmail(int id);
+        Task RegisterNewEmail(string emailAddress);
+        Task<List<Email>> GetAllRegisteredEmails();
+        Task RemoveEmail(int id);
     }
 }

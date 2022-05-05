@@ -14,8 +14,4 @@
       <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Services\Implementation\" />
-    </ItemGroup>
-
 </Project>
