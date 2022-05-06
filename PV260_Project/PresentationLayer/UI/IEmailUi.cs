@@ -1,7 +1,6 @@
 ﻿namespace PresentationLayer.UI
 {
-    public interface IEmailUi
+    public interface IEmailUi : IUi
     {
-        Task Run();
     }
 }

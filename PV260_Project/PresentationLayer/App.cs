@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PresentationLayer.UI;
+﻿using PresentationLayer.UI;
 
-namespace PresentationLayer.ConsoleApps
+namespace PresentationLayer
 {
     public class App : IApp
     {
         private readonly IEmailUi _emailUi;
+        private readonly IDataSetUi _dataSetUi;
 
-        public App(IEmailUi emailUi) {
+        public App(IEmailUi emailUi, IDataSetUi dataSetUi) {
             _emailUi = emailUi;
+            _dataSetUi = dataSetUi;
         }
 
         public void Run() {
@@ -21,6 +18,7 @@ namespace PresentationLayer.ConsoleApps
             while (input! != "q") {
                 switch (input) {
                     case "1":
+                        _dataSetUi.Run();
                         break;
                     case "2":
                         _emailUi.Run();
@@ -29,8 +27,8 @@ namespace PresentationLayer.ConsoleApps
                         Console.WriteLine("Incorrect input!");
                         break;
                 }
-                input = Console.ReadLine();
                 PrintMenu();
+                input = Console.ReadLine();
             }
             Console.WriteLine("Quitting...");
         }

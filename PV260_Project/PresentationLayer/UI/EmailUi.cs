@@ -4,7 +4,7 @@ using BusinessLayer.Services;
 
 namespace PresentationLayer.UI
 {
-    public class EmailUi : IEmailUi
+    public class EmailUi : BaseUi, IEmailUi
     {
         private readonly IUserEmailService _emailService;
 
@@ -13,35 +13,23 @@ namespace PresentationLayer.UI
         }
 
         public async Task Run() {
-            PrintMenu();
-
-            var input = Console.ReadLine();
-            while (input! != "b") {
-                switch (input) {
-                    case "1":
-                        await RegisterEmail();
-                        break;
-                    case "2":
-                        await ViewEmails();
-                        break;
-                    case "3":
-                        await DeleteEmail();
-                        break;
-                    default:
-                        Console.WriteLine("Invalid input!");
-                        break;
+            await GenerateUi(new List<MenuAction>() {
+                new MenuAction() {
+                    Identifier = "1",
+                    Description = "Register new email",
+                    Action = RegisterEmail
+                },
+                new MenuAction() {
+                    Identifier = "2",
+                    Description = "View all registered emails",
+                    Action = ViewEmails
+                },
+                new MenuAction() {
+                    Identifier = "3",
+                    Description = "Delete email by id",
+                    Action = DeleteEmail
                 }
-                PrintMenu();
-                input = Console.ReadLine();
-            }
-        }
-
-        private void PrintMenu() {
-            Console.WriteLine(
-                "1: Register new email\n" +
-                "2: View all emails\n" +
-                "3: Delete email by id\n" +
-                "b: Back");
+            });
         }
 
         private async Task RegisterEmail() {

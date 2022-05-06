@@ -1,9 +1,10 @@
+using BusinessLayer.DataLoading;
+using BusinessLayer.DiffComputing;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PresentationLayer.ConsoleApps;
 using DataLayer;
 using PresentationLayer.UI;
 
@@ -36,11 +37,13 @@ namespace PresentationLayer
                     services.AddTransient<IDataSetService, DataSetService>();
                     services.AddTransient<IUserEmailService, UserEmailService>();
                     services.AddTransient<IEmailUi, EmailUi>();
+                    services.AddTransient<IDataSetUi, DataSetUi>();
+                    services.AddTransient<IDataLoader, CsvFileLoader>();
+                    services.AddTransient<IDiffComputer, DiffComputer>();
                     Console.WriteLine(Directory.GetCurrentDirectory());
                     services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
                     /*
-                     * TODO
-                     * something is wrong with the connection string
+                     * The connection string needs to be changed based on action
                      * for running app it needs to be: DataSource=..\\..\\..\\..\\DataLayer\\app.db
                      * for updating database: DataSource=..\\DataLayer\\app.db
                      *

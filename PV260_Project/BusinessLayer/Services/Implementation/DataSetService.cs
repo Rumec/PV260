@@ -19,11 +19,18 @@ namespace BusinessLayer.Services.Implementation
         }
 
         public async Task<List<DataSet>> GetAllDataSets() {
-            return await _context.DataSets.AsNoTracking().ToListAsync();
+            return await _context.DataSets
+                .OrderByDescending(x => x.Date)
+                .Include(x => x.Holdings)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<DataSet> GetDataSetById(int id) {
-            var dataSet = await _context.DataSets.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var dataSet = await _context.DataSets
+                .Include(x => x.Holdings)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (dataSet == null)
                 throw new DataSetDoesNotExistException(id);
 
