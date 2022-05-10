@@ -3,7 +3,7 @@
     /// <summary>
     /// These are the data, which do not change in time (at least I think)
     /// </summary>
-    public class HoldingBaseInformation
+    public class HoldingBaseInformation : BaseEntity
     {
         public string Fund { get; set; }
         public string Company { get; set; }

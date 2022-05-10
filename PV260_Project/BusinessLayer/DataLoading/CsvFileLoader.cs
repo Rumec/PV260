@@ -30,15 +30,8 @@ public class CsvLine
 
 public class CsvFileLoader : IDataLoader
 {
-    private readonly string _delimiter;
-
-    public CsvFileLoader(string delimiter)
-    {
-        _delimiter = delimiter;
-    }
-
-    public DataSet LoadCsvFile(string path) {
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = _delimiter, BadDataFound = null, MissingFieldFound = null};
+    public DataSet LoadCsvFile(string path, string delimiter = ",") {
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = delimiter, BadDataFound = null, MissingFieldFound = null};
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, config);
 
