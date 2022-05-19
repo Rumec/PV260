@@ -42,11 +42,9 @@ namespace PresentationLayer
                     services.AddTransient<IDataDownloader, CsvFileDownloader>();
                     services.AddTransient<IDiffComputer, DiffComputer>();
                     Console.WriteLine(Directory.GetCurrentDirectory());
-                    services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
+                    // services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
+                    services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=/home/rumec/Documents/c#/cv/PV260/PV260_Project/DataLayer/app.db"));
                     /*
-                     * NOTE: For Linux users: You have to specify the absolute path to the DB file, otherwise RIP
-                     * 
-                     * 
                      * The connection string needs to be changed based on action
                      * for running app it needs to be: DataSource=..\\..\\..\\..\\DataLayer\\app.db
                      * for updating database: DataSource=..\\DataLayer\\app.db

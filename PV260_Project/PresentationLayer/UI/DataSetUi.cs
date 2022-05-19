@@ -38,11 +38,13 @@ namespace PresentationLayer.UI
 
         private async Task LoadFile()
         {
-            Console.WriteLine("Path: ('b' for back)");
-            var input = Console.ReadLine();
+            var input = "";
 
             while (input! != "b")
             {
+                Console.WriteLine("Path: ('b' for back)");
+                input = Console.ReadLine();
+
                 if (!File.Exists(input))
                 {
                     Console.WriteLine("File on this path does not exist!");
@@ -50,29 +52,42 @@ namespace PresentationLayer.UI
                     continue;
                 }
 
-                var file = _dataLoader.LoadCsvFile(input);
-                await _dataSetService.CreateDataSet(file);
+                try
+                {
+                    var file = _dataLoader.LoadCsvFile(input);
+                    await _dataSetService.CreateDataSet(file);
+                }
+                catch (DataSetAlreadyExistsException e)
+                {
+                    Console.WriteLine("File from this date was already downloaded!");
+                    continue;
+                }
+
                 return;
             }
         }
 
         private async Task DownloadCurrentFile()
         {
-            Console.WriteLine("Path: ('b' for back)");
-            var input = Console.ReadLine();
+            var input = "";
 
             while (input! != "b")
             {
+                Console.WriteLine("Path: ('b' for back)");
+                input = Console.ReadLine();
                 try
                 {
                     var file = await _dataDownloader.LoadCsvFile(input!);
                     await _dataSetService.CreateDataSet(file);
                     return;
                 }
+                catch (DataSetAlreadyExistsException e)
+                {
+                    Console.WriteLine("File from this date was already downloaded!");
+                }
                 catch (Exception e)
                 {
                     Console.WriteLine("Unable to download the file!");
-                    input = Console.ReadLine();
                 }
             }
         }
