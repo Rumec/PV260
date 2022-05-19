@@ -33,7 +33,7 @@ public static class CsvOperations
         return file;
     }
 
-    public static DataSet ParseCsvData(string path, CsvReader csv)
+    public static DataSet ParseCsvData(string file, CsvReader csv)
     {
         try
         {
@@ -45,7 +45,7 @@ public static class CsvOperations
         }
         catch (Exception e)
         {
-            throw new DataLoaderException($"Error while parsing csv file '{path}'", e);
+            throw new DataLoaderException($"Error while parsing csv file '{file}'", e);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    Console.WriteLine("File from this date was already downloaded!");
+                    Console.WriteLine("File from this date was already loaded!");
                     continue;
                 }
 
