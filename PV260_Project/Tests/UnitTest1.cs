@@ -20,10 +20,10 @@ namespace Tests
         [Test]
         public void Test() {
             //Arrange
-            var loader = new CsvFileLoader(",");
+            var loader = new CsvFileLoader();
 
             //Act
-            var file = loader.LoadCsvFile($"{BasePath}/TestFiles/test_file_1.csv");
+            var file = loader.LoadCsvFile($"{BasePath}/TestFiles/test_file_1.csv", ",");
 
             //Assert
             file.Holdings.Count.Should().Be(36);

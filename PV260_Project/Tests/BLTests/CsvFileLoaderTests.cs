@@ -16,7 +16,7 @@ public class CsvFileLoaderTests
     [SetUp]
     public void Setup()
     {
-        _testLoader = new CsvFileLoader(",");
+        _testLoader = new CsvFileLoader();
         _pathToFile = "../../../TestFiles/csv_file_loader_test.csv";
         _testFile = new DataSet();
         _testFile.Date = new DateTime(2022, 3, 21);
@@ -29,7 +29,7 @@ public class CsvFileLoaderTests
     [Test]
     public void TestLoadCsvFile()
     {
-        var file = _testLoader.LoadCsvFile(_pathToFile);
+        var file = _testLoader.LoadCsvFile(_pathToFile, ",");
         
         file.Should().BeEquivalentTo(_testFile);
     }
