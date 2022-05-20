@@ -51,10 +51,8 @@ namespace PresentationLayer
                     services.AddTransient<IEmailSender, GmailSender>();
                     services.AddTransient<IMessageBuilder, HtmlMessageBuilder>();
 
-                    var section = config.GetSection(nameof(SmtpSettings));
-                    var smtpConfig = section.Get<SmtpSettings>();
-                    services.AddSingleton(smtpConfig);                    
-
+                    services.AddOptions<SmtpSettings>().Bind(config.GetSection(nameof(SmtpSettings)));
+                    
                     Console.WriteLine(Directory.GetCurrentDirectory());
                     services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
                     /*

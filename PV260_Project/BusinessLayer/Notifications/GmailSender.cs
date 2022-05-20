@@ -2,15 +2,16 @@
 using System.Net.Mail;
 using BusinessLayer.Exceptions;
 using DataLayer.Models;
+using Microsoft.Extensions.Options;
 
 namespace BusinessLayer.Notifications;
 
 public class GmailSender : IEmailSender
 {
     private readonly IMessageBuilder _messageBuilder;
-    private readonly SmtpSettings _smtpSettings;
+    private readonly IOptions<SmtpSettings> _smtpSettings;
 
-    public GmailSender(IMessageBuilder messageBuilder, SmtpSettings smtpSettings)
+    public GmailSender(IMessageBuilder messageBuilder, IOptions<SmtpSettings> smtpSettings)
     {
         _messageBuilder = messageBuilder;
         _smtpSettings = smtpSettings;
@@ -20,13 +21,13 @@ public class GmailSender : IEmailSender
     {
         var client = new SmtpClient()
         {
-            Host = _smtpSettings.Host,
-            Port = _smtpSettings.Port,
-            EnableSsl = _smtpSettings.EnableSsl,
-            Credentials = new NetworkCredential(_smtpSettings.FromAddress, _smtpSettings.Password)
+            Host = _smtpSettings.Value.Host,
+            Port = _smtpSettings.Value.Port,
+            EnableSsl = _smtpSettings.Value.EnableSsl,
+            Credentials = new NetworkCredential(_smtpSettings.Value.FromAddress, _smtpSettings.Value.Password)
         };
 
-        var message = _messageBuilder.Build(_smtpSettings.FromAddress, recipients.Select(r => r.Address).ToList(),
+        var message = _messageBuilder.Build(_smtpSettings.Value.FromAddress, recipients.Select(r => r.Address).ToList(),
             "Daily updates - ARK Funds", holdingChanges);
 
         try
