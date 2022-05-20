@@ -11,5 +11,5 @@ public interface IEmailSender
     /// <param name="holdingChanges">list of holding changes</param>
     /// <param name="recipients">recipients of given notification</param>
     /// <exception cref="EmailSenderException">when sending notifications has failed</exception>
-    void SendDailyNotification(List<HoldingChanges> holdingChanges, List<Email> recipients);
+    void SendNotification(List<HoldingChanges> holdingChanges, List<Email> recipients);
 }

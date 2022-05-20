@@ -16,7 +16,7 @@ public class GmailSender : IEmailSender
         _smtpSettings = smtpSettings;
     }
 
-    public void SendDailyNotification(List<HoldingChanges> holdingChanges, List<Email> recipients)
+    public void SendNotification(List<HoldingChanges> holdingChanges, List<Email> recipients)
     {
         var client = new SmtpClient()
         {

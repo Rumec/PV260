@@ -132,7 +132,7 @@ namespace PresentationLayer.UI
 
             try
             {
-                _emailSender.SendDailyNotification(holdingChanges, emails);
+                _emailSender.SendNotification(holdingChanges, emails);
                 Console.WriteLine("Emails were sent successfully.");
             }
             catch (EmailSenderException e)
