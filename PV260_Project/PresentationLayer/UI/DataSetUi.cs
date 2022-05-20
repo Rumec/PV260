@@ -122,28 +122,22 @@ namespace PresentationLayer.UI
         private async Task SendNotification() {
             var emails = await _userEmailService.GetAllRegisteredEmails();
 
-            if (!emails.Any())
-            {
-                Console.WriteLine("Notifications were not sent, because there aren't any registered emails.");
-                Console.WriteLine("Please, register at least one email in order to send notifications.");
-            }
-            else
-            {
-                Console.WriteLine("Daily notification email are being sent to the following emails:");
-                emails.ForEach(e => Console.WriteLine(e.Address));
-                
-                var dataSets = await _dataSetService.GetAllDataSets();
-                var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
+            if (!emails.Any()) return;
 
-                try
-                {
-                    _emailSender.SendDailyNotification(holdingChanges, emails);
-                    Console.WriteLine("Emails were sent successfully.");
-                }
-                catch (EmailSenderException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+            Console.WriteLine("Daily notification email are being sent to the following emails:");
+            emails.ForEach(e => Console.WriteLine(e.Address));
+                
+            var dataSets = await _dataSetService.GetAllDataSets();
+            var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
+
+            try
+            {
+                _emailSender.SendDailyNotification(holdingChanges, emails);
+                Console.WriteLine("Emails were sent successfully.");
+            }
+            catch (EmailSenderException e)
+            {
+                Console.WriteLine(e.Message);
             }
 
             Console.WriteLine("(type 'b' for back)");
