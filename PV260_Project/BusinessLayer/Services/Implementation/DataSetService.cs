@@ -14,11 +14,13 @@ namespace BusinessLayer.Services.Implementation
     {
         private readonly StockSystemDbContext _context;
 
-        public DataSetService(StockSystemDbContext context) {
+        public DataSetService(StockSystemDbContext context)
+        {
             _context = context;
         }
 
-        public async Task<List<DataSet>> GetAllDataSets() {
+        public async Task<List<DataSet>> GetAllDataSets()
+        {
             return await _context.DataSets
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Holdings)
@@ -26,7 +28,8 @@ namespace BusinessLayer.Services.Implementation
                 .ToListAsync();
         }
 
-        public async Task<DataSet> GetDataSetById(int id) {
+        public async Task<DataSet> GetDataSetById(int id)
+        {
             var dataSet = await _context.DataSets
                 .Include(x => x.Holdings)
                 .AsNoTracking()
@@ -37,12 +40,20 @@ namespace BusinessLayer.Services.Implementation
             return dataSet;
         }
 
-        public async Task CreateDataSet(DataSet dataSet) {
+        public async Task CreateDataSet(DataSet dataSet)
+        {
+            var alreadyExists = await _context.DataSets
+                .AnyAsync(d => d.Date == dataSet.Date);
+
+            if (alreadyExists)
+                throw new DataSetAlreadyExistsException();
+
             await _context.DataSets.AddAsync(dataSet);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteDataSet(int id) {
+        public async Task DeleteDataSet(int id)
+        {
             var dataSet = await _context.DataSets.FindAsync(id);
             if (dataSet == null)
                 throw new DataSetDoesNotExistException(id);

@@ -24,7 +24,7 @@ public class GmailSender : IEmailSender
             Host = _smtpSettings.Value.Host,
             Port = _smtpSettings.Value.Port,
             EnableSsl = _smtpSettings.Value.EnableSsl,
-            Credentials = new NetworkCredential(_smtpSettings.Value.FromAddress, _smtpSettings.Value.Password)
+            Credentials = new NetworkCredential(_smtpSettings.Value.UserName, _smtpSettings.Value.Password)
         };
 
         var message = _messageBuilder.Build(_smtpSettings.Value.FromAddress, recipients.Select(r => r.Address).ToList(),

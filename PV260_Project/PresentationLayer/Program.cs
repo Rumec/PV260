@@ -16,17 +16,20 @@ namespace PresentationLayer
     {
         private readonly IApp _app;
 
-        public static void Main() {
+        public static void Main()
+        {
             var args = Environment.GetCommandLineArgs();
             var host = CreateHostBuilder(args).Build();
             host.Services.GetRequiredService<Program>().Run();
         }
 
-        public Program(IApp app) {
+        public Program(IApp app)
+        {
             _app = app;
         }
 
-        public void Run() {
+        public void Run()
+        {
             _app.Run();
         }
 
@@ -47,6 +50,7 @@ namespace PresentationLayer
                     services.AddTransient<IEmailUi, EmailUi>();
                     services.AddTransient<IDataSetUi, DataSetUi>();
                     services.AddTransient<IDataLoader, CsvFileLoader>();
+                    services.AddTransient<IDataDownloader, CsvFileDownloader>();
                     services.AddTransient<IDiffComputer, DiffComputer>();
                     services.AddTransient<IEmailSender, GmailSender>();
                     services.AddTransient<IMessageBuilder, HtmlMessageBuilder>();
@@ -56,6 +60,10 @@ namespace PresentationLayer
                     Console.WriteLine(Directory.GetCurrentDirectory());
                     services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
                     /*
+                     * NOTE: For all UNIX users:
+                     *       You have to specify absolute path for some reason (because reasons).
+                     *       E.G.: services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=/home/rumec/Documents/c#/cv/PV260/PV260_Project/DataLayer/app.db"));
+                     * 
                      * The connection string needs to be changed based on action
                      * for running app it needs to be: DataSource=..\\..\\..\\..\\DataLayer\\app.db
                      * for updating database: DataSource=..\\DataLayer\\app.db
