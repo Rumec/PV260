@@ -38,7 +38,7 @@ namespace BusinessLayer.Jobs
                 Console.WriteLine($"fileUrl: {fileUrl?.Url}");
                 if (fileUrl == null)
                 {
-                    Console.WriteLine("File url is not specifed, please set a file url for automatic downloads");
+                    Console.WriteLine("File url is not specifed, please set a file url for automatic downloads in the config menu");
                     return;
                 }
                 DataSet dataSet = await _downloader.LoadCsvFile(fileUrl.Url);
