@@ -12,6 +12,7 @@ namespace DataLayer
     {
         public DbSet<DataSet> DataSets { get; set; }
         public DbSet<Email> Emails { get; set; }
+        public DbSet<FileUrl> FileUrls { get; set; }
 
         public StockSystemDbContext(DbContextOptions<StockSystemDbContext> options) : base(options) { }
 
