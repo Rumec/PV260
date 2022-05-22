@@ -1,11 +1,13 @@
 using BusinessLayer.DataLoading;
 using BusinessLayer.DiffComputing;
+using BusinessLayer.Notifications;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DataLayer;
+using Microsoft.Extensions.Configuration;
 using PresentationLayer.UI;
 
 namespace PresentationLayer
@@ -33,6 +35,11 @@ namespace PresentationLayer
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName)
+                .AddJsonFile("appsettings.json", optional: false);
+            IConfiguration config = builder.Build();
+            
             return Host.CreateDefaultBuilder(args).ConfigureServices(
                 services =>
                 {
@@ -45,6 +52,11 @@ namespace PresentationLayer
                     services.AddTransient<IDataLoader, CsvFileLoader>();
                     services.AddTransient<IDataDownloader, CsvFileDownloader>();
                     services.AddTransient<IDiffComputer, DiffComputer>();
+                    services.AddTransient<IEmailSender, GmailSender>();
+                    services.AddTransient<IMessageBuilder, HtmlMessageBuilder>();
+
+                    services.AddOptions<SmtpSettings>().Bind(config.GetSection(nameof(SmtpSettings)));
+                    
                     Console.WriteLine(Directory.GetCurrentDirectory());
                     services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
                     /*

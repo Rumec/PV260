@@ -2,6 +2,7 @@
 using BusinessLayer.DataLoading;
 using BusinessLayer.DiffComputing;
 using BusinessLayer.Exceptions;
+using BusinessLayer.Notifications;
 using BusinessLayer.Services;
 using BusinessLayer.Writers;
 
@@ -10,17 +11,19 @@ namespace PresentationLayer.UI
     public class DataSetUi : BaseUi, IDataSetUi
     {
         private readonly IDataSetService _dataSetService;
+        private readonly IUserEmailService _userEmailService;
         private readonly IDiffComputer _diffComputer;
         private readonly IDataLoader _dataLoader;
         private readonly IDataDownloader _dataDownloader;
+        private readonly IEmailSender _emailSender;
 
-        public DataSetUi(IDataSetService dataSetService, IDiffComputer diffComputer, IDataLoader dataLoader,
-            IDataDownloader dataDownloader)
-        {
+        public DataSetUi(IDataSetService dataSetService, IUserEmailService userEmailService, IDiffComputer diffComputer, IDataLoader dataLoader, IDataDownloader dataDownloader, IEmailSender emailSender) {
             _dataSetService = dataSetService;
+            _userEmailService = userEmailService;
             _diffComputer = diffComputer;
             _dataLoader = dataLoader;
             _dataDownloader = dataDownloader;
+            _emailSender = emailSender;
         }
 
         public async Task Run()
@@ -32,8 +35,9 @@ namespace PresentationLayer.UI
                     new() { Identifier = "2", Description = "Download current file", Action = DownloadCurrentFile },
                     new() { Identifier = "3", Description = "View all files", Action = ViewFiles },
                     new() { Identifier = "4", Description = "Make a diff", Action = MakeDiff },
-                    new() { Identifier = "5", Description = "Delete file by ID", Action = DeleteFile }
-                });
+                    new() { Identifier = "5", Description = "Delete file by ID", Action = DeleteFile },
+                    new() { Identifier = "6", Description = "Send email notification", Action = SendNotification }
+            });
         }
 
         private async Task LoadFile()
@@ -163,5 +167,34 @@ namespace PresentationLayer.UI
                 }
             }
         }
+        
+        private async Task SendNotification() {
+            var emails = await _userEmailService.GetAllRegisteredEmails();
+
+            if (!emails.Any()) return;
+
+            Console.WriteLine("Daily notification email are being sent to the following emails:");
+            emails.ForEach(e => Console.WriteLine(e.Address));
+                
+            var dataSets = await _dataSetService.GetAllDataSets();
+            var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
+
+            try
+            {
+                _emailSender.SendNotification(holdingChanges, emails);
+                Console.WriteLine("Emails were sent successfully.");
+            }
+            catch (EmailSenderException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            Console.WriteLine("(type 'b' for back)");
+            var input = Console.ReadLine();
+            while (input! != "b") {
+                input = Console.ReadLine();
+            }
+        }
+
     }
 }
