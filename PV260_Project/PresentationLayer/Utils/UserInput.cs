@@ -9,6 +9,7 @@ public static class UserInput
     // App user input
     public const string DataSet = "1";
     public const string Email = "2";
+    public const string Config = "3";
     
     // EmailUi user input
     public const string RegisterEmail = "1";
