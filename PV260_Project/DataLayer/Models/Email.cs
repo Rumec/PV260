@@ -9,5 +9,12 @@ namespace DataLayer.Models
     public class Email : BaseEntity
     {
         public string Address { get; set; }
+        
+        public override string ToString()
+        {
+            return $"Id: {Id}, address: {Address}";
+        }
     }
+    
+    
 }

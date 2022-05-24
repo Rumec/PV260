@@ -78,7 +78,7 @@ namespace PresentationLayer.UI
             _consoleWrapper.WriteLine("Printing all registered emails:");
             var emails = await _emailService.GetAllRegisteredEmails();
             foreach (var email in emails) {
-                _consoleWrapper.WriteLine($"Id: {email.Id}, address: {email.Address}");
+                _consoleWrapper.WriteLine(email.ToString());
             }
         }
 

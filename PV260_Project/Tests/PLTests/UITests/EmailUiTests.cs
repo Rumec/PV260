@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BusinessLayer.Exceptions;
 using BusinessLayer.Services;
+using DataLayer.Models;
 using NUnit.Framework;
 using Moq;
 using PresentationLayer;
@@ -248,6 +250,33 @@ public class EmailUiTests
         _userMailService.Verify(t => t.RegisterNewEmail("test3@gmail.com"), Times.Once);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
+    }
+    
+    // ------------------------[ ViewEmails tests ]-------------------------
+    
+    [Test]
+    public void TestRun_ViewEmails_ThenQuit()
+    {
+        // arrange
+        _consoleWrapper.SetupSequence(t => t.ReadLine())
+            .Returns(UserInput.ViewEmails)
+            .Returns(UserInput.Quit);
+
+        var email1 = new Email {Address = "test1@gmail.com", Id = 1};
+        var email2 = new Email {Address = "test2@gmail.com", Id = 2};
+        _userMailService.Setup(t => t.GetAllRegisteredEmails())
+            .Returns(Task.FromResult(new List<Email> { email1, email2 }));
+        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        
+        // act
+        emailUi.Run();
+        
+        // assert
+        _consoleWrapper.Verify(t => t.WriteLine(email1.ToString()), Times.Once);
+        _consoleWrapper.Verify(t => t.WriteLine(email2.ToString()), Times.Once);
+        _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Once);
+        _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
+        _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
     }
     
 }
