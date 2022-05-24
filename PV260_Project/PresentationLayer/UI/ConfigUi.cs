@@ -62,8 +62,6 @@ namespace PresentationLayer.UI
             {
                 var fileUrl = await _fileUrlService.SetNewFileUrl(input);
                 Console.WriteLine($"Url set to: {fileUrl.Url}");
-                var res = await _fileUrlService.GetAll();
-                res.ForEach(fileUrl => Console.WriteLine($"{fileUrl.Id}, {fileUrl.Url}, {fileUrl.CreatedAt}, {fileUrl.ValidTo}"));
             }
             catch (Exception e)
             {
