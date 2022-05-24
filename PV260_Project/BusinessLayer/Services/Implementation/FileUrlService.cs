@@ -25,14 +25,28 @@ namespace BusinessLayer.Services.Implementation
 
         public async Task<FileUrl> SetNewFileUrl(string url)
         {
-            var transaction = await _context.Database.BeginTransactionAsync(isolationLevel: System.Data.IsolationLevel.Serializable);
+            using (var transaction = await _context.Database.BeginTransactionAsync(isolationLevel: System.Data.IsolationLevel.Serializable))
+            {
+                try
+                {
+                    var fileUrls = await _context.FileUrls.Where(fileUrl => fileUrl.ValidTo == null).ToListAsync();
+                    foreach (var fileUrl in fileUrls)
+                    {
+                        fileUrl.ValidTo = DateTime.Now;
+                    }
+                    await _context.SaveChangesAsync();
 
-            await _context.Database.ExecuteSqlRawAsync("UPDATE FileUrls SET ValidTo = datetime('now') WHERE ValidTo IS NULL");
-            var updated = await _context.FileUrls.AddAsync(new FileUrl() { Url = url });
-            await _context.SaveChangesAsync();
+                    var addResult = await _context.FileUrls.AddAsync(new FileUrl() { Url = url });
+                    await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
-            return updated.Entity;
+                    await transaction.CommitAsync();
+                    return addResult.Entity;
+                } catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         public async Task<List<FileUrl>> GetAll()

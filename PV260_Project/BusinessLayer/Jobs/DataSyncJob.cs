@@ -8,6 +8,7 @@ using DataLayer.Models;
 using BusinessLayer.Services;
 using BusinessLayer.Exceptions;
 
+
 namespace BusinessLayer.Jobs
 {
     public class DataSyncJob : IDataSyncJob
@@ -15,6 +16,8 @@ namespace BusinessLayer.Jobs
         private readonly IDataDownloader _downloader;
         private readonly IDataSetService _dataSetService;
         private readonly IFileUrlService _fileUrlService;
+
+        private const int DATA_SYNC_INTERVAL_IN_MS = 24 * 60 * 60 * 1000;
 
         private Timer? timer;
 
@@ -27,7 +30,7 @@ namespace BusinessLayer.Jobs
 
         public void Run()
         {
-            timer = new Timer(new TimerCallback(DownloadAndSaveFile), null, 0, 24 * 60 * 60 * 1000);
+            timer = new Timer(new TimerCallback(DownloadAndSaveFile), null, 0, DATA_SYNC_INTERVAL_IN_MS);
         }
 
         public async void DownloadAndSaveFile(object? state)
@@ -35,19 +38,20 @@ namespace BusinessLayer.Jobs
             try
             {
                 var fileUrl = await _fileUrlService.GetLatest();
-                Console.WriteLine($"fileUrl: {fileUrl?.Url}");
-                if (fileUrl == null)
+                if (fileUrl is null)
                 {
-                    Console.WriteLine("File url is not specifed, please set a file url for automatic downloads in the config menu");
+                    Console.WriteLine("Automatic download: file url is not specifed, please set a file url for automatic downloads in the config menu");
                     return;
                 }
                 DataSet dataSet = await _downloader.LoadCsvFile(fileUrl.Url);
                 await _dataSetService.CreateDataSet(dataSet);
             }
-            catch (DataSetAlreadyExistsException) {}
-            catch (Exception e)
+            catch (DataSetAlreadyExistsException) {
+                Console.WriteLine("Automatic download: data already downloaded");
+            }
+            catch (Exception)
             {
-                Console.WriteLine("Automatic data load failed...");
+                Console.WriteLine("Automatic download: data load failed...");
             }
         }
 

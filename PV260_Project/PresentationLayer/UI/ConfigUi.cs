@@ -34,7 +34,7 @@ namespace PresentationLayer.UI
         private async Task ShowCurrentFileUrl()
         {
             var fileUrl = await _fileUrlService.GetLatest();
-            Console.WriteLine($"Currently set file url: {fileUrl?.Url ?? "None"}");
+            Console.WriteLine(fileUrl?.Url != null ? $"Currently set file url: {fileUrl.Url}" : "Url is not set yet");
         }
 
         private async Task SetFileUrl()
@@ -44,20 +44,16 @@ namespace PresentationLayer.UI
 
             var urlRegex = new Regex(@"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)");
 
-            if (input == "b")
-            {
+            if (input == "b") 
                 return;
-            }
 
-            while (input == null || !urlRegex.IsMatch(input))
+            while (input is null || !urlRegex.IsMatch(input))
             {
                 Console.WriteLine("Invalid url. Try again");
                 input = Console.ReadLine();
 
-                if (input == "b")
-                {
+                if (input == "b") 
                     return;
-                }
 
                 continue;
             }
