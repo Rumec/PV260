@@ -58,19 +58,20 @@ namespace PresentationLayer.UI
             {
                 return;
             }
-            
-            while (!IsValidEmail(input))
+
+            while (input != null && input != UserInput.Back)
             {
-                _consoleWrapper.WriteLine($"Invalid email address. Try again. ('{UserInput.Back}' for back)");
-                input = _consoleWrapper.ReadLine();
-                
-                if (input == null || input == UserInput.Back)
+                if (!IsValidEmail(input))
                 {
-                    return;
+                    _consoleWrapper.WriteLine($"Invalid email address. Try again. ('{UserInput.Back}' for back)");
                 }
+                else
+                {
+                    await _emailService.RegisterNewEmail(input);
+                }
+
+                input = _consoleWrapper.ReadLine();
             }
-            
-            await _emailService.RegisterNewEmail(input);
         }
 
         private async Task ViewEmails() {
@@ -89,7 +90,8 @@ namespace PresentationLayer.UI
                 if (!int.TryParse(input, out _))
                 {
                     _consoleWrapper.WriteLine("Id has to be a number!");
-                    return;
+                    input = _consoleWrapper.ReadLine();
+                    continue;
                 }
 
                 try
