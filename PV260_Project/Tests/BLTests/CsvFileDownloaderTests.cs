@@ -11,7 +11,7 @@ using FluentAssertions;
 
 namespace Tests.BLTests
 {
-    public class Tests
+    public class CsvFileDownloaderTests
     {
         private DataSet _testFile;
         private WireMockServer _server;
