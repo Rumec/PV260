@@ -5,6 +5,7 @@ using BusinessLayer.Exceptions;
 using BusinessLayer.Notifications;
 using BusinessLayer.Services;
 using BusinessLayer.Writers;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer.UI
 {
@@ -17,7 +18,15 @@ namespace PresentationLayer.UI
         private readonly IDataDownloader _dataDownloader;
         private readonly IEmailSender _emailSender;
 
-        public DataSetUi(IDataSetService dataSetService, IUserEmailService userEmailService, IDiffComputer diffComputer, IDataLoader dataLoader, IDataDownloader dataDownloader, IEmailSender emailSender) {
+        public DataSetUi(
+            IDataSetService dataSetService,
+            IUserEmailService userEmailService,
+            IDiffComputer diffComputer,
+            IDataLoader dataLoader,
+            IDataDownloader dataDownloader,
+            IEmailSender emailSender,
+            IConsoleWrapper consoleWrapper) : base(consoleWrapper)
+        {
             _dataSetService = dataSetService;
             _userEmailService = userEmailService;
             _diffComputer = diffComputer;
