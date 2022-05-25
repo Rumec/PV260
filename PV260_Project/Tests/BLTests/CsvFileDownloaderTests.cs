@@ -31,9 +31,9 @@ namespace Tests.BLTests
             
             _testFile = new DataSet();
             _testFile.Date = new DateTime(2022, 3, 21);
-            _testFile.Holdings.Add(BLTests.TestUtils.CreateTeslaHolding());
-            _testFile.Holdings.Add(BLTests.TestUtils.CreateHealthHolding());
-            _testFile.Holdings.Add(BLTests.TestUtils.CreateRokuHolding());
+            _testFile.Holdings.Add(TestUtils.CreateTeslaHolding());
+            _testFile.Holdings.Add(TestUtils.CreateHealthHolding());
+            _testFile.Holdings.Add(TestUtils.CreateRokuHolding());
         }
 
         [TearDown]
