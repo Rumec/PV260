@@ -25,7 +25,7 @@ public class AppTests
     
     private void VerifyQuitting()
     {
-        _consoleWrapper.Verify(t => t.WriteLine("Quitting..."), Times.Once);
+        _consoleWrapper.Verify(t => t.WriteLine(Messages.Quitting), Times.Once);
     }
 
     [Test]
@@ -46,11 +46,13 @@ public class AppTests
     }
 
     [Test]
-    public void TestRun_ChooseIncorrectInput_ThenQuit()
+    [TestCase("xYz")]
+    [TestCase("bla bla bla")]
+    public void TestRun_ChooseIncorrectInput_ThenQuit(string invalidInput)
     {
         // arrange
         _consoleWrapper.SetupSequence(t => t.ReadLine())
-            .Returns("xYz")
+            .Returns(invalidInput)
             .Returns(UserInput.Quit);
         var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
         
@@ -58,7 +60,7 @@ public class AppTests
         app.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine("Incorrect input!"), Times.Once);
+        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidInput), Times.Once);
         VerifyQuitting();
         _emailUi.Verify(t => t.Run(), Times.Never);
         _dataSetUi.Verify(t => t.Run(), Times.Never);

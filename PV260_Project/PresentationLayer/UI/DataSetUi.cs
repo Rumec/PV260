@@ -17,6 +17,7 @@ namespace PresentationLayer.UI
         private readonly IDataLoader _dataLoader;
         private readonly IDataDownloader _dataDownloader;
         private readonly IEmailSender _emailSender;
+        private readonly IConsoleWrapper _consoleWrapper;
 
         public DataSetUi(
             IDataSetService dataSetService,
@@ -33,6 +34,7 @@ namespace PresentationLayer.UI
             _dataLoader = dataLoader;
             _dataDownloader = dataDownloader;
             _emailSender = emailSender;
+            _consoleWrapper = consoleWrapper;
         }
 
         public async Task Run()
@@ -40,12 +42,12 @@ namespace PresentationLayer.UI
             await GenerateUi(
                 new List<MenuAction>
                 {
-                    new() { Identifier = "1", Description = "Load file", Action = LoadFile },
-                    new() { Identifier = "2", Description = "Download current file", Action = DownloadCurrentFile },
-                    new() { Identifier = "3", Description = "View all files", Action = ViewFiles },
-                    new() { Identifier = "4", Description = "Make a diff", Action = MakeDiff },
-                    new() { Identifier = "5", Description = "Delete file by ID", Action = DeleteFile },
-                    new() { Identifier = "6", Description = "Send email notification", Action = SendNotification }
+                    new() { Identifier = UserInput.LoadFile, Description = "Load file", Action = LoadFile },
+                    new() { Identifier = UserInput.DownloadCurrentFile, Description = "Download current file", Action = DownloadCurrentFile },
+                    new() { Identifier = UserInput.ViewFiles, Description = "View all files", Action = ViewFiles },
+                    new() { Identifier = UserInput.MakeDiff, Description = "Make a diff", Action = MakeDiff },
+                    new() { Identifier = UserInput.DeleteFile, Description = "Delete file by ID", Action = DeleteFile },
+                    new() { Identifier = UserInput.SendNotification, Description = "Send email notification", Action = SendNotification }
             });
         }
 
@@ -53,15 +55,15 @@ namespace PresentationLayer.UI
         {
             var input = "";
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                Console.WriteLine("Path: ('b' for back)");
-                input = Console.ReadLine();
+                _consoleWrapper.WriteLine($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleWrapper.ReadLine();
 
                 if (!File.Exists(input))
                 {
-                    Console.WriteLine("File on this path does not exist!");
-                    input = Console.ReadLine();
+                    _consoleWrapper.WriteLine("File on this path does not exist!");
+                    input = _consoleWrapper.ReadLine();
                     continue;
                 }
 
@@ -72,7 +74,7 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    Console.WriteLine("File from this date was already loaded!");
+                    _consoleWrapper.WriteLine("File from this date was already loaded!");
                     continue;
                 }
 
@@ -84,10 +86,10 @@ namespace PresentationLayer.UI
         {
             var input = "";
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                Console.WriteLine("Path: ('b' for back)");
-                input = Console.ReadLine();
+                _consoleWrapper.WriteLine($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleWrapper.ReadLine();
                 try
                 {
                     var file = await _dataDownloader.LoadCsvFile(input!);
@@ -96,11 +98,11 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    Console.WriteLine("File from this date was already downloaded!");
+                    _consoleWrapper.WriteLine("File from this date was already downloaded!");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Unable to download the file!");
+                    _consoleWrapper.WriteLine("Unable to download the file!");
                 }
             }
         }
@@ -110,24 +112,24 @@ namespace PresentationLayer.UI
             var files = await _dataSetService.GetAllDataSets();
             foreach (var file in files)
             {
-                Console.WriteLine($"File ID: {file.Id}, date of upload: {file.Date}");
+                _consoleWrapper.WriteLine($"File ID: {file.Id}, date of upload: {file.Date}");
             }
         }
 
         private async Task MakeDiff()
         {
-            Console.WriteLine(
+            _consoleWrapper.WriteLine(
                 "Write IDs of two files and path (if you want to store diff in file) separated by comma (like '5,3,../output.csv').\n" +
                 "If no path is provided, the diff will be printed in console (type 'b' for back).");
 
-            var input = Console.ReadLine();
-            while (input! != "b")
+            var input = _consoleWrapper.ReadLine();
+            while (input! != UserInput.Back)
             {
                 var lines = input!.Split(",");
                 if (lines.Length is < 2 or > 3)
                 {
-                    Console.WriteLine($"Wrong number of arguments: {lines.Length}");
-                    input = Console.ReadLine();
+                    _consoleWrapper.WriteLine($"Wrong number of arguments: {lines.Length}");
+                    input = _consoleWrapper.ReadLine();
                     continue;
                 }
 
@@ -145,23 +147,25 @@ namespace PresentationLayer.UI
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    _consoleWrapper.WriteLine(e.Message);
                 }
 
-                input = Console.ReadLine();
+                input = _consoleWrapper.ReadLine();
             }
         }
 
         private async Task DeleteFile()
         {
-            Console.WriteLine("Which file would you like to remove? ('b' for back)");
-            var input = Console.ReadLine();
+            _consoleWrapper.WriteLine($"Which file would you like to remove? ('{UserInput.Back}' for back)");
+            var input = _consoleWrapper.ReadLine();
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                while (!int.TryParse(input, out _))
+                if (!int.TryParse(input, out _))
                 {
-                    Console.WriteLine("Id has to be a number!");
+                    _consoleWrapper.WriteLine("Id has to be a number!");
+                    input = _consoleWrapper.ReadLine();
+                    continue;
                 }
 
                 try
@@ -171,8 +175,8 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetDoesNotExistException)
                 {
-                    Console.WriteLine("File with this ID does not exist. Try again");
-                    input = Console.ReadLine();
+                    _consoleWrapper.WriteLine("File with this ID does not exist. Try again");
+                    input = _consoleWrapper.ReadLine();
                 }
             }
         }
@@ -182,8 +186,8 @@ namespace PresentationLayer.UI
 
             if (!emails.Any()) return;
 
-            Console.WriteLine("Daily notification email are being sent to the following emails:");
-            emails.ForEach(e => Console.WriteLine(e.Address));
+            _consoleWrapper.WriteLine("Daily notification email are being sent to the following emails:");
+            emails.ForEach(e => _consoleWrapper.WriteLine(e.Address));
                 
             var dataSets = await _dataSetService.GetAllDataSets();
             var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
@@ -191,17 +195,17 @@ namespace PresentationLayer.UI
             try
             {
                 _emailSender.SendNotification(holdingChanges, emails);
-                Console.WriteLine("Emails were sent successfully.");
+                _consoleWrapper.WriteLine("Emails were sent successfully.");
             }
             catch (EmailSenderException e)
             {
-                Console.WriteLine(e.Message);
+                _consoleWrapper.WriteLine(e.Message);
             }
 
-            Console.WriteLine("(type 'b' for back)");
-            var input = Console.ReadLine();
-            while (input! != "b") {
-                input = Console.ReadLine();
+            _consoleWrapper.WriteLine($"(type '{UserInput.Back}' for back)");
+            var input = _consoleWrapper.ReadLine();
+            while (input! != UserInput.Back) {
+                input = _consoleWrapper.ReadLine();
             }
         }
 

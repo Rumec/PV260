@@ -28,13 +28,13 @@ namespace PresentationLayer
                         _emailUi.Run();
                         break;
                     default:
-                        _consoleWrapper.WriteLine("Incorrect input!");
+                        _consoleWrapper.WriteLine(Messages.InvalidInput);
                         break;
                 }
                 PrintMenu();
                 input = _consoleWrapper.ReadLine();
             }
-            _consoleWrapper.WriteLine("Quitting...");
+            _consoleWrapper.WriteLine(Messages.Quitting);
         }
 
         private void PrintMenu() { 
