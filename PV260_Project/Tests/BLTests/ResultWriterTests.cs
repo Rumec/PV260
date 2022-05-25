@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using BusinessLayer.DataLoading;
+using BusinessLayer.Notifications;
 using BusinessLayer.Writers;
 using DataLayer.Models;
 using FluentAssertions;
@@ -31,11 +32,9 @@ public class ResultWriterTests
     [SetUp]
     public void Setup()
     {
-        
-        // _testFile.Date = new DateTime(2022, 3, 21);
-        _changes.Add(CreateTeslaHoldingChanges());
-        _changes.Add(CreateHealthHoldingChanges());
-        _changes.Add(CreateRokuHoldingChanges());
+        _changes.Add(TestUtils.CreateTeslaHoldingChanges());
+        _changes.Add(TestUtils.CreateHealthHoldingChanges());
+        _changes.Add(TestUtils.CreateRokuHoldingChanges());
 
         _culture = new CultureInfo("en-US");
     }
@@ -46,61 +45,5 @@ public class ResultWriterTests
     {
         string str = DiffStringGenerator.GenerateSeparatedString(_changes, _culture, new DateTime(2022, 4, 12));
         Assert.AreEqual(str, _holdingsStr);
-    }
-
-
-    private static HoldingChanges CreateTeslaHoldingChanges()
-    {
-        HoldingBaseInformation teslaTestHoldingInfo = new HoldingBaseInformation();
-        teslaTestHoldingInfo.Company = "TESLA INC";
-        teslaTestHoldingInfo.Cusip = "88160R101";
-        teslaTestHoldingInfo.Fund = "ARKK";
-        teslaTestHoldingInfo.Ticker = "TSLA";
-
-        return new HoldingChanges()
-        {
-            Holding = teslaTestHoldingInfo,
-            NumberOfShares = 1356326,
-            DifferenceOfShares = 10,
-            DifferenceOfWeight = 9.66,
-            MarketValueDifference = 1228003997.14
-        };
-    }
-
-    private static HoldingChanges CreateHealthHoldingChanges()
-    {
-        HoldingBaseInformation healthTestHoldingInfo = new HoldingBaseInformation();
-        healthTestHoldingInfo.Company = "TELADOC HEALTH INC";
-        healthTestHoldingInfo.Cusip = "87918A105";
-        healthTestHoldingInfo.Fund = "ARKK";
-        healthTestHoldingInfo.Ticker = "TDOC";
-
-
-        return new HoldingChanges()
-        {
-            Holding = healthTestHoldingInfo,
-            NumberOfShares = 12395542,
-            DifferenceOfShares = -20,
-            DifferenceOfWeight = -6.72,
-            MarketValueDifference = 854796576.32
-        };
-    }
-
-    private static HoldingChanges CreateRokuHoldingChanges()
-    {
-        HoldingBaseInformation healthTestHoldingInfo = new HoldingBaseInformation();
-        healthTestHoldingInfo.Company = "ROKU INC";
-        healthTestHoldingInfo.Cusip = "77543R102";
-        healthTestHoldingInfo.Fund = "ARKK";
-        healthTestHoldingInfo.Ticker = "ROKU";
-
-        return new HoldingChanges()
-        {
-            Holding = healthTestHoldingInfo,
-            NumberOfShares = 6452422,
-            DifferenceOfShares = 5,
-            DifferenceOfWeight = 6.34,
-            MarketValueDifference = 805584886.70
-        };
     }
 }
