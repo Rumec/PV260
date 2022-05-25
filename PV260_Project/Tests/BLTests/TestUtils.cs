@@ -1,14 +1,23 @@
 ﻿using DataLayer.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Tests.BLTests
 {
     public static class TestUtils
     {
+        public static DateTime HoldingsDate = new DateTime(2022, 4, 12);
+        public static CultureInfo HoldingsCultureInfo = new CultureInfo("en-US");
+        public static string HoldingsStr =
+            "date,fund,company,ticker,cusip,shares,\"shares difference\",\"market value difference ($)\",\"weight difference (%)\"" +
+            Environment.NewLine +
+            "04/12/2022,ARKK,\"TESLA INC\",TSLA,88160R101,\"1,356,326\",\"10.00\",\"$1,228,003,997.14\",9.66%" +
+            Environment.NewLine +
+            "04/12/2022,ARKK,\"TELADOC HEALTH INC\",TDOC,87918A105,\"12,395,542\",\"-20.00\",\"$854,796,576.32\",-6.72%" +
+            Environment.NewLine +
+            "04/12/2022,ARKK,\"ROKU INC\",ROKU,77543R102,\"6,452,422\",\"5.00\",\"$805,584,886.70\",6.34%" +
+            Environment.NewLine;
+        
         public static HoldingChanges CreateTeslaHoldingChanges()
         {
             HoldingBaseInformation teslaTestHoldingInfo = new HoldingBaseInformation();
