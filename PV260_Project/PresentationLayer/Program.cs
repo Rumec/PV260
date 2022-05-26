@@ -3,6 +3,7 @@ using BusinessLayer.DiffComputing;
 using BusinessLayer.Notifications;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Implementation;
+using BusinessLayer.Jobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,8 +49,10 @@ namespace PresentationLayer
                     services.AddTransient<IApp, App>();
                     services.AddTransient<IDataSetService, DataSetService>();
                     services.AddTransient<IUserEmailService, UserEmailService>();
+                    services.AddTransient<IFileUrlService, FileUrlService>();
                     services.AddTransient<IEmailUi, EmailUi>();
                     services.AddTransient<IDataSetUi, DataSetUi>();
+                    services.AddTransient<IConfigUi, ConfigUi>();
                     services.AddTransient<IDataLoader, CsvFileLoader>();
                     services.AddTransient<IDataDownloader, CsvFileDownloader>();
                     services.AddTransient<IDiffComputer, DiffComputer>();
@@ -59,6 +62,7 @@ namespace PresentationLayer
 
                     services.AddOptions<SmtpSettings>().Bind(config.GetSection(nameof(SmtpSettings)));
                     
+                    services.AddTransient<IDataSyncJob, DataSyncJob>();
                     Console.WriteLine(Directory.GetCurrentDirectory());
                     services.AddDbContext<StockSystemDbContext>(options => options.UseSqlite("DataSource=..\\..\\..\\..\\DataLayer\\app.db"));
                     /*

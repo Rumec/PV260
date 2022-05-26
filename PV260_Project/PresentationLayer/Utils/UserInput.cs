@@ -9,6 +9,7 @@ public static class UserInput
     // App user input
     public const string DataSet = "1";
     public const string Email = "2";
+    public const string Config = "3";
     
     // EmailUi user input
     public const string RegisterEmail = "1";
@@ -22,6 +23,9 @@ public static class UserInput
     public const string MakeDiff = "4";
     public const string DeleteFile = "5";
     public const string SendNotification = "6";
-    
+
     // ConfigUi user input
+    public const string ShowCurrentFileUrl = "1";
+    public const string SetFileUrl = "2";
+    public const string ListFileUrls = "3";
 }
