@@ -25,7 +25,11 @@ public class EmailUiTests
         _consoleWrapper = new Mock<IConsoleIoWrapper>();
         _userMailService = new Mock<IUserEmailService>();
     }
-    
+
+    private EmailUi GetEmailUiInstance()
+    {
+        return new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+    }
 
     [Test]
     [TestCase(UserInput.Quit)]
@@ -35,7 +39,7 @@ public class EmailUiTests
         // arrange
         _consoleWrapper.Setup(t => t.GetInput())
             .Returns(userInput);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         await emailUi.Run();
@@ -64,7 +68,7 @@ public class EmailUiTests
             .Returns(id)
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -94,7 +98,7 @@ public class EmailUiTests
             .Returns(UserInput.Quit);
         _userMailService.Setup(t => t.RemoveEmail(It.IsAny<int>()))
             .Throws(new EmailDoesNotExistException(parsedId));
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -123,7 +127,7 @@ public class EmailUiTests
             .Returns(id)
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -157,7 +161,7 @@ public class EmailUiTests
             .Returns(validIds[2])
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -194,7 +198,7 @@ public class EmailUiTests
             .Returns(email)
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -220,7 +224,7 @@ public class EmailUiTests
             .Returns(email)
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -248,7 +252,7 @@ public class EmailUiTests
             .Returns(validEmail)
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -279,7 +283,7 @@ public class EmailUiTests
             .Returns(validEmails[2])
             .Returns(UserInput.Back)
             .Returns(UserInput.Quit);
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
@@ -318,7 +322,7 @@ public class EmailUiTests
         };
         _userMailService.Setup(t => t.GetAllRegisteredEmails())
             .Returns(Task.FromResult(emails));
-        var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
+        var emailUi = GetEmailUiInstance();
         
         // act
         emailUi.Run();
