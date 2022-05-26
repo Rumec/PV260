@@ -1,4 +1,4 @@
-﻿using BusinessLayer.DataLoading;
+﻿    using BusinessLayer.DataLoading;
 using BusinessLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -73,6 +73,8 @@ namespace PresentationLayer.UI
         private async Task ListFileUrls()
         {
             var fileUrls = await _fileUrlService.GetAll();
+            if (fileUrls.Count == 0)
+                _consoleIoWrapper.ShowMessage("There is no URL set");
             fileUrls.ForEach(fileUrl => _consoleIoWrapper.ShowMessage($"id: {fileUrl.Id}, url: {fileUrl.Url}, createdAt: {fileUrl.CreatedAt}, validTo: {fileUrl?.ValidTo?.ToString() ?? "Null"}"));
         }
     }

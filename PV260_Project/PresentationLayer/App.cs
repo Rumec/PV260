@@ -20,21 +20,20 @@ namespace PresentationLayer
             _consoleIoWrapper = consoleIoWrapper;
         }
 
-        public void Run() {
+        public async Task Run() {
             _dataSyncJob.Run();
             PrintMenu();
             var input = _consoleIoWrapper.GetInput();
             while (input! != UserInput.Quit) {
                 switch (input) {
                     case UserInput.DataSet:
-                        // TODO: should be awaited?
-                        _dataSetUi.Run();
+                        await _dataSetUi.Run();
                         break;
                     case UserInput.Email:
-                        _emailUi.Run();
+                        await _emailUi.Run();
                         break;
                     case "3":
-                        _configUi.Run();
+                        await _configUi.Run();
                         break;
                     default:
                         _consoleIoWrapper.ShowMessage(Messages.InvalidInput);
