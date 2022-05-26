@@ -23,6 +23,9 @@ public static class UserInput
     public const string MakeDiff = "4";
     public const string DeleteFile = "5";
     public const string SendNotification = "6";
-    
+
     // ConfigUi user input
+    public const string ShowCurrentFileUrl = "1";
+    public const string SetFileUrl = "2";
+    public const string ListFileUrls = "3";
 }
