@@ -29,6 +29,7 @@ namespace BusinessLayer.Services.Implementation
             var result = await _context.FileUrls.AddAsync(new FileUrl() { Url = url });
             await _context.SaveChangesAsync();
 
+            result.State = EntityState.Detached;
             return result.Entity;
         }
 
