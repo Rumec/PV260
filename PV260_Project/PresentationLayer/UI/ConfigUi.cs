@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer.UI
 {
@@ -13,11 +14,14 @@ namespace PresentationLayer.UI
     {
         private readonly IDataDownloader _dataDownloader;
         private readonly IFileUrlService _fileUrlService;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        public ConfigUi(IDataDownloader dataDownloader, IFileUrlService fileUrlService)
+        public ConfigUi(IDataDownloader dataDownloader, IFileUrlService fileUrlService, IConsoleIoWrapper consoleIoWrapper)
+            : base(consoleIoWrapper)
         {
             _fileUrlService = fileUrlService;
             _dataDownloader = dataDownloader;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public async Task Run()
