@@ -3,32 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer.UI
 {
-    public abstract class BaseUi
+    public class BaseUi
     {
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
+
+        protected BaseUi(IConsoleIoWrapper consoleIoWrapper)
+        {
+            _consoleIoWrapper = consoleIoWrapper;
+        }
+        
         protected async Task GenerateUi(List<MenuAction> actions)
         {
             PrintMenu(actions);
 
-            var input = Console.ReadLine();
-            while (input != "b" && input != "q") {
+            var input = _consoleIoWrapper.GetInput();
+            while (input != UserInput.Back && input != UserInput.Quit) {
                 var action = actions.FirstOrDefault(x => x.Identifier == input);
                 if (action == null) {
-                    Console.WriteLine("Incorrect input!");
+                    _consoleIoWrapper.ShowMessage(Messages.InvalidInput);
                     continue;
                 }
 
                 await action.Action();
                 PrintMenu(actions);
-                input = Console.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 
         private void PrintMenu(List<MenuAction> actions) {
             foreach (var action in actions) {
-                Console.WriteLine($"{action.Identifier}: {action.Description}");
+                _consoleIoWrapper.ShowMessage($"{action.Identifier}: {action.Description}");
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using PresentationLayer.UI;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer
 {
@@ -6,39 +7,42 @@ namespace PresentationLayer
     {
         private readonly IEmailUi _emailUi;
         private readonly IDataSetUi _dataSetUi;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        public App(IEmailUi emailUi, IDataSetUi dataSetUi) {
+        public App(IEmailUi emailUi, IDataSetUi dataSetUi, IConsoleIoWrapper consoleIoWrapper) {
             _emailUi = emailUi;
             _dataSetUi = dataSetUi;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public void Run() {
             PrintMenu();
-            var input = Console.ReadLine();
-            while (input! != "q") {
+            var input = _consoleIoWrapper.GetInput();
+            while (input! != UserInput.Quit) {
                 switch (input) {
-                    case "1":
+                    case UserInput.DataSet:
+                        // TODO: should be awaited?
                         _dataSetUi.Run();
                         break;
-                    case "2":
+                    case UserInput.Email:
                         _emailUi.Run();
                         break;
                     default:
-                        Console.WriteLine("Incorrect input!");
+                        _consoleIoWrapper.ShowMessage(Messages.InvalidInput);
                         break;
                 }
                 PrintMenu();
-                input = Console.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
-            Console.WriteLine("Quitting...");
+            _consoleIoWrapper.ShowMessage(Messages.Quitting);
         }
 
         private void PrintMenu() { 
-            Console.WriteLine(
+            _consoleIoWrapper.ShowMessage(
                 "What do you want to work with:\n" +
-                "1: Data sets\n" +
-                "2: Emails\n" +
-                "q: Quit");
+                $"{UserInput.DataSet}: Data sets\n" +
+                $"{UserInput.Email}: Emails\n" +
+                $"{UserInput.Quit}: Quit");
         }
     }
 }

@@ -5,6 +5,7 @@ using BusinessLayer.Exceptions;
 using BusinessLayer.Notifications;
 using BusinessLayer.Services;
 using BusinessLayer.Writers;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer.UI
 {
@@ -16,14 +17,24 @@ namespace PresentationLayer.UI
         private readonly IDataLoader _dataLoader;
         private readonly IDataDownloader _dataDownloader;
         private readonly IEmailSender _emailSender;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        public DataSetUi(IDataSetService dataSetService, IUserEmailService userEmailService, IDiffComputer diffComputer, IDataLoader dataLoader, IDataDownloader dataDownloader, IEmailSender emailSender) {
+        public DataSetUi(
+            IDataSetService dataSetService,
+            IUserEmailService userEmailService,
+            IDiffComputer diffComputer,
+            IDataLoader dataLoader,
+            IDataDownloader dataDownloader,
+            IEmailSender emailSender,
+            IConsoleIoWrapper consoleIoWrapper) : base(consoleIoWrapper)
+        {
             _dataSetService = dataSetService;
             _userEmailService = userEmailService;
             _diffComputer = diffComputer;
             _dataLoader = dataLoader;
             _dataDownloader = dataDownloader;
             _emailSender = emailSender;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public async Task Run()
@@ -31,12 +42,12 @@ namespace PresentationLayer.UI
             await GenerateUi(
                 new List<MenuAction>
                 {
-                    new() { Identifier = "1", Description = "Load file", Action = LoadFile },
-                    new() { Identifier = "2", Description = "Download current file", Action = DownloadCurrentFile },
-                    new() { Identifier = "3", Description = "View all files", Action = ViewFiles },
-                    new() { Identifier = "4", Description = "Make a diff", Action = MakeDiff },
-                    new() { Identifier = "5", Description = "Delete file by ID", Action = DeleteFile },
-                    new() { Identifier = "6", Description = "Send email notification", Action = SendNotification }
+                    new() { Identifier = UserInput.LoadFile, Description = "Load file", Action = LoadFile },
+                    new() { Identifier = UserInput.DownloadCurrentFile, Description = "Download current file", Action = DownloadCurrentFile },
+                    new() { Identifier = UserInput.ViewFiles, Description = "View all files", Action = ViewFiles },
+                    new() { Identifier = UserInput.MakeDiff, Description = "Make a diff", Action = MakeDiff },
+                    new() { Identifier = UserInput.DeleteFile, Description = "Delete file by ID", Action = DeleteFile },
+                    new() { Identifier = UserInput.SendNotification, Description = "Send email notification", Action = SendNotification }
             });
         }
 
@@ -44,15 +55,15 @@ namespace PresentationLayer.UI
         {
             var input = "";
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                Console.WriteLine("Path: ('b' for back)");
-                input = Console.ReadLine();
+                _consoleIoWrapper.ShowMessage($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleIoWrapper.GetInput();
 
                 if (!File.Exists(input))
                 {
-                    Console.WriteLine("File on this path does not exist!");
-                    input = Console.ReadLine();
+                    _consoleIoWrapper.ShowMessage("File on this path does not exist!");
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
@@ -63,7 +74,7 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    Console.WriteLine("File from this date was already loaded!");
+                    _consoleIoWrapper.ShowMessage("File from this date was already loaded!");
                     continue;
                 }
 
@@ -75,10 +86,10 @@ namespace PresentationLayer.UI
         {
             var input = "";
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                Console.WriteLine("Path: ('b' for back)");
-                input = Console.ReadLine();
+                _consoleIoWrapper.ShowMessage($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleIoWrapper.GetInput();
                 try
                 {
                     var file = await _dataDownloader.LoadCsvFile(input!);
@@ -87,11 +98,11 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    Console.WriteLine("File from this date was already downloaded!");
+                    _consoleIoWrapper.ShowMessage("File from this date was already downloaded!");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Unable to download the file!");
+                    _consoleIoWrapper.ShowMessage("Unable to download the file!");
                 }
             }
         }
@@ -101,24 +112,24 @@ namespace PresentationLayer.UI
             var files = await _dataSetService.GetAllDataSets();
             foreach (var file in files)
             {
-                Console.WriteLine($"File ID: {file.Id}, date of upload: {file.Date}");
+                _consoleIoWrapper.ShowMessage($"File ID: {file.Id}, date of upload: {file.Date}");
             }
         }
 
         private async Task MakeDiff()
         {
-            Console.WriteLine(
+            _consoleIoWrapper.ShowMessage(
                 "Write IDs of two files and path (if you want to store diff in file) separated by comma (like '5,3,../output.csv').\n" +
                 "If no path is provided, the diff will be printed in console (type 'b' for back).");
 
-            var input = Console.ReadLine();
-            while (input! != "b")
+            var input = _consoleIoWrapper.GetInput();
+            while (input! != UserInput.Back)
             {
                 var lines = input!.Split(",");
                 if (lines.Length is < 2 or > 3)
                 {
-                    Console.WriteLine($"Wrong number of arguments: {lines.Length}");
-                    input = Console.ReadLine();
+                    _consoleIoWrapper.ShowMessage($"Wrong number of arguments: {lines.Length}");
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
@@ -136,23 +147,25 @@ namespace PresentationLayer.UI
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    _consoleIoWrapper.ShowMessage(e.Message);
                 }
 
-                input = Console.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 
         private async Task DeleteFile()
         {
-            Console.WriteLine("Which file would you like to remove? ('b' for back)");
-            var input = Console.ReadLine();
+            _consoleIoWrapper.ShowMessage($"Which file would you like to remove? ('{UserInput.Back}' for back)");
+            var input = _consoleIoWrapper.GetInput();
 
-            while (input! != "b")
+            while (input! != UserInput.Back)
             {
-                while (!int.TryParse(input, out _))
+                if (!int.TryParse(input, out _))
                 {
-                    Console.WriteLine("Id has to be a number!");
+                    _consoleIoWrapper.ShowMessage("Id has to be a number!");
+                    input = _consoleIoWrapper.GetInput();
+                    continue;
                 }
 
                 try
@@ -162,8 +175,8 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetDoesNotExistException)
                 {
-                    Console.WriteLine("File with this ID does not exist. Try again");
-                    input = Console.ReadLine();
+                    _consoleIoWrapper.ShowMessage("File with this ID does not exist. Try again");
+                    input = _consoleIoWrapper.GetInput();
                 }
             }
         }
@@ -173,8 +186,8 @@ namespace PresentationLayer.UI
 
             if (!emails.Any()) return;
 
-            Console.WriteLine("Daily notification email are being sent to the following emails:");
-            emails.ForEach(e => Console.WriteLine(e.Address));
+            _consoleIoWrapper.ShowMessage("Daily notification email are being sent to the following emails:");
+            emails.ForEach(e => _consoleIoWrapper.ShowMessage(e.Address));
                 
             var dataSets = await _dataSetService.GetAllDataSets();
             var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
@@ -182,17 +195,17 @@ namespace PresentationLayer.UI
             try
             {
                 _emailSender.SendNotification(holdingChanges, emails);
-                Console.WriteLine("Emails were sent successfully.");
+                _consoleIoWrapper.ShowMessage("Emails were sent successfully.");
             }
             catch (EmailSenderException e)
             {
-                Console.WriteLine(e.Message);
+                _consoleIoWrapper.ShowMessage(e.Message);
             }
 
-            Console.WriteLine("(type 'b' for back)");
-            var input = Console.ReadLine();
-            while (input! != "b") {
-                input = Console.ReadLine();
+            _consoleIoWrapper.ShowMessage($"(type '{UserInput.Back}' for back)");
+            var input = _consoleIoWrapper.GetInput();
+            while (input! != UserInput.Back) {
+                input = _consoleIoWrapper.GetInput();
             }
         }
 

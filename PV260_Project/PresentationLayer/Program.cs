@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using DataLayer;
 using Microsoft.Extensions.Configuration;
 using PresentationLayer.UI;
+using PresentationLayer.Utils;
 
 namespace PresentationLayer
 {
@@ -54,6 +55,7 @@ namespace PresentationLayer
                     services.AddTransient<IDiffComputer, DiffComputer>();
                     services.AddTransient<IEmailSender, GmailSender>();
                     services.AddTransient<IMessageBuilder, HtmlMessageBuilder>();
+                    services.AddTransient<IConsoleIoWrapper, ConsoleIoWrapper>();
 
                     services.AddOptions<SmtpSettings>().Bind(config.GetSection(nameof(SmtpSettings)));
                     
