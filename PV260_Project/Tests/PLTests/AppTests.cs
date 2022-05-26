@@ -1,3 +1,4 @@
+using BusinessLayer.Jobs;
 using NUnit.Framework;
 using Moq;
 using PresentationLayer;
@@ -13,6 +14,8 @@ public class AppTests
     private Mock<IConsoleIoWrapper> _consoleWrapper;
     private Mock<IEmailUi> _emailUi;
     private Mock<IDataSetUi> _dataSetUi;
+    private Mock<IDataSyncJob> _dataSyncJob;
+    private Mock<IConfigUi> _configUi;
     
     
     [SetUp]
@@ -21,11 +24,18 @@ public class AppTests
         _consoleWrapper = new Mock<IConsoleIoWrapper>();
         _emailUi = new Mock<IEmailUi>();
         _dataSetUi = new Mock<IDataSetUi>();
+        _dataSyncJob = new Mock<IDataSyncJob>();
+        _configUi = new Mock<IConfigUi>();
     }
     
     private void VerifyQuitting()
     {
         _consoleWrapper.Verify(t => t.ShowMessage(Messages.Quitting), Times.Once);
+    }
+
+    private App GetAppInstance()
+    {
+        return new App(_emailUi.Object, _dataSetUi.Object, _dataSyncJob.Object, _configUi.Object, _consoleWrapper.Object);
     }
 
     [Test]
@@ -34,7 +44,7 @@ public class AppTests
         // arrange
         _consoleWrapper.Setup(t => t.GetInput())
             .Returns(UserInput.Quit);
-        var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
+        var app = GetAppInstance();
         
         // act
         app.Run();
@@ -54,7 +64,7 @@ public class AppTests
         _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(invalidInput)
             .Returns(UserInput.Quit);
-        var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
+        var app = GetAppInstance();
         
         // act
         app.Run();
@@ -73,7 +83,7 @@ public class AppTests
         _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.DataSet)
             .Returns(UserInput.Quit);
-        var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
+        var app = GetAppInstance();
         
         // act
         app.Run();
@@ -91,7 +101,7 @@ public class AppTests
         _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.Email)
             .Returns(UserInput.Quit);
-        var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
+        var app = GetAppInstance();
         
         // act
         app.Run();
@@ -110,7 +120,7 @@ public class AppTests
             .Returns(UserInput.DataSet)
             .Returns(UserInput.Email)
             .Returns(UserInput.Quit);
-        var app = new App(_emailUi.Object, _dataSetUi.Object, _consoleWrapper.Object);
+        var app = GetAppInstance();
         
         // act
         app.Run();
