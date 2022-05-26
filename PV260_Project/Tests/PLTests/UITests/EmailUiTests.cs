@@ -310,20 +310,27 @@ public class EmailUiTests
         _consoleWrapper.SetupSequence(t => t.ReadLine())
             .Returns(UserInput.ViewEmails)
             .Returns(UserInput.Quit);
-
-        var email1 = new Email {Address = "test1@gmail.com", Id = 1};
-        var email2 = new Email {Address = "test2@gmail.com", Id = 2};
+        
+        var emails = new List<Email>
+        {
+            new() {Address = "test1@gmail.com", Id = 1},
+            new() {Address = "test2@gmail.com", Id = 2}
+        };
         _userMailService.Setup(t => t.GetAllRegisteredEmails())
-            .Returns(Task.FromResult(new List<Email> { email1, email2 }));
+            .Returns(Task.FromResult(emails));
         var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
         
         // act
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(email1.ToString()), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(email2.ToString()), Times.Once);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Once);
+        
+        foreach (var email in emails)
+        {
+            _consoleWrapper.Verify(t => t.WriteLine(Messages.PrintEmail(email)), Times.Once);
+        }
+
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         

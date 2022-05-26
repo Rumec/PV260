@@ -24,7 +24,7 @@ namespace PresentationLayer.UI
             while (input != UserInput.Back && input != UserInput.Quit) {
                 var action = actions.FirstOrDefault(x => x.Identifier == input);
                 if (action == null) {
-                    _consoleWrapper.WriteLine("Incorrect input!");
+                    _consoleWrapper.WriteLine(Messages.InvalidInput);
                     continue;
                 }
 

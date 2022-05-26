@@ -1,3 +1,5 @@
+using DataLayer.Models;
+
 namespace PresentationLayer.Utils;
 
 public static class Messages
@@ -15,6 +17,7 @@ public static class Messages
     public const string InputAnotherEmailAddress = $"Input another email address or {GoBack}";
 
     public const string ViewEmails = "Printing all registered emails:";
+    public static string PrintEmail(Email email) => $"Id: {email.Id}, address: {email.Address}";
 
     public const string DeleteEmail = $"Which email would you like to remove? ({GoBack})";
     public const string InputAnotherEmailId = $"Input another email ID or {GoBack}";
