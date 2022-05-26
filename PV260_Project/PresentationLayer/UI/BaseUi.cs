@@ -9,34 +9,34 @@ namespace PresentationLayer.UI
 {
     public class BaseUi
     {
-        private readonly IConsoleWrapper _consoleWrapper;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        protected BaseUi(IConsoleWrapper consoleWrapper)
+        protected BaseUi(IConsoleIoWrapper consoleIoWrapper)
         {
-            _consoleWrapper = consoleWrapper;
+            _consoleIoWrapper = consoleIoWrapper;
         }
         
         protected async Task GenerateUi(List<MenuAction> actions)
         {
             PrintMenu(actions);
 
-            var input = _consoleWrapper.ReadLine();
+            var input = _consoleIoWrapper.GetInput();
             while (input != UserInput.Back && input != UserInput.Quit) {
                 var action = actions.FirstOrDefault(x => x.Identifier == input);
                 if (action == null) {
-                    _consoleWrapper.WriteLine(Messages.InvalidInput);
+                    _consoleIoWrapper.ShowMessage(Messages.InvalidInput);
                     continue;
                 }
 
                 await action.Action();
                 PrintMenu(actions);
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 
         private void PrintMenu(List<MenuAction> actions) {
             foreach (var action in actions) {
-                _consoleWrapper.WriteLine($"{action.Identifier}: {action.Description}");
+                _consoleIoWrapper.ShowMessage($"{action.Identifier}: {action.Description}");
             }
         }
     }

@@ -1,13 +1,13 @@
 namespace PresentationLayer.Utils;
 
-public class ConsoleWrapper : IConsoleWrapper
+public class ConsoleIoWrapper : IConsoleIoWrapper
 {
-    public string? ReadLine()
+    public string? GetInput()
     {
         return Console.ReadLine();
     }
 
-    public void WriteLine(string s)
+    public void ShowMessage(string s)
     {
         Console.WriteLine(s);
     }

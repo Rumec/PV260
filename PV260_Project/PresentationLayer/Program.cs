@@ -55,7 +55,7 @@ namespace PresentationLayer
                     services.AddTransient<IDiffComputer, DiffComputer>();
                     services.AddTransient<IEmailSender, GmailSender>();
                     services.AddTransient<IMessageBuilder, HtmlMessageBuilder>();
-                    services.AddTransient<IConsoleWrapper, ConsoleWrapper>();
+                    services.AddTransient<IConsoleIoWrapper, ConsoleIoWrapper>();
 
                     services.AddOptions<SmtpSettings>().Bind(config.GetSection(nameof(SmtpSettings)));
                     

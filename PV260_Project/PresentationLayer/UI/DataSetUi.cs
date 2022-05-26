@@ -17,7 +17,7 @@ namespace PresentationLayer.UI
         private readonly IDataLoader _dataLoader;
         private readonly IDataDownloader _dataDownloader;
         private readonly IEmailSender _emailSender;
-        private readonly IConsoleWrapper _consoleWrapper;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
         public DataSetUi(
             IDataSetService dataSetService,
@@ -26,7 +26,7 @@ namespace PresentationLayer.UI
             IDataLoader dataLoader,
             IDataDownloader dataDownloader,
             IEmailSender emailSender,
-            IConsoleWrapper consoleWrapper) : base(consoleWrapper)
+            IConsoleIoWrapper consoleIoWrapper) : base(consoleIoWrapper)
         {
             _dataSetService = dataSetService;
             _userEmailService = userEmailService;
@@ -34,7 +34,7 @@ namespace PresentationLayer.UI
             _dataLoader = dataLoader;
             _dataDownloader = dataDownloader;
             _emailSender = emailSender;
-            _consoleWrapper = consoleWrapper;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public async Task Run()
@@ -57,13 +57,13 @@ namespace PresentationLayer.UI
 
             while (input! != UserInput.Back)
             {
-                _consoleWrapper.WriteLine($"Path: ('{UserInput.Back}' for back)");
-                input = _consoleWrapper.ReadLine();
+                _consoleIoWrapper.ShowMessage($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleIoWrapper.GetInput();
 
                 if (!File.Exists(input))
                 {
-                    _consoleWrapper.WriteLine("File on this path does not exist!");
-                    input = _consoleWrapper.ReadLine();
+                    _consoleIoWrapper.ShowMessage("File on this path does not exist!");
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
@@ -74,7 +74,7 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    _consoleWrapper.WriteLine("File from this date was already loaded!");
+                    _consoleIoWrapper.ShowMessage("File from this date was already loaded!");
                     continue;
                 }
 
@@ -88,8 +88,8 @@ namespace PresentationLayer.UI
 
             while (input! != UserInput.Back)
             {
-                _consoleWrapper.WriteLine($"Path: ('{UserInput.Back}' for back)");
-                input = _consoleWrapper.ReadLine();
+                _consoleIoWrapper.ShowMessage($"Path: ('{UserInput.Back}' for back)");
+                input = _consoleIoWrapper.GetInput();
                 try
                 {
                     var file = await _dataDownloader.LoadCsvFile(input!);
@@ -98,11 +98,11 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetAlreadyExistsException e)
                 {
-                    _consoleWrapper.WriteLine("File from this date was already downloaded!");
+                    _consoleIoWrapper.ShowMessage("File from this date was already downloaded!");
                 }
                 catch (Exception e)
                 {
-                    _consoleWrapper.WriteLine("Unable to download the file!");
+                    _consoleIoWrapper.ShowMessage("Unable to download the file!");
                 }
             }
         }
@@ -112,24 +112,24 @@ namespace PresentationLayer.UI
             var files = await _dataSetService.GetAllDataSets();
             foreach (var file in files)
             {
-                _consoleWrapper.WriteLine($"File ID: {file.Id}, date of upload: {file.Date}");
+                _consoleIoWrapper.ShowMessage($"File ID: {file.Id}, date of upload: {file.Date}");
             }
         }
 
         private async Task MakeDiff()
         {
-            _consoleWrapper.WriteLine(
+            _consoleIoWrapper.ShowMessage(
                 "Write IDs of two files and path (if you want to store diff in file) separated by comma (like '5,3,../output.csv').\n" +
                 "If no path is provided, the diff will be printed in console (type 'b' for back).");
 
-            var input = _consoleWrapper.ReadLine();
+            var input = _consoleIoWrapper.GetInput();
             while (input! != UserInput.Back)
             {
                 var lines = input!.Split(",");
                 if (lines.Length is < 2 or > 3)
                 {
-                    _consoleWrapper.WriteLine($"Wrong number of arguments: {lines.Length}");
-                    input = _consoleWrapper.ReadLine();
+                    _consoleIoWrapper.ShowMessage($"Wrong number of arguments: {lines.Length}");
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
@@ -147,24 +147,24 @@ namespace PresentationLayer.UI
                 }
                 catch (Exception e)
                 {
-                    _consoleWrapper.WriteLine(e.Message);
+                    _consoleIoWrapper.ShowMessage(e.Message);
                 }
 
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 
         private async Task DeleteFile()
         {
-            _consoleWrapper.WriteLine($"Which file would you like to remove? ('{UserInput.Back}' for back)");
-            var input = _consoleWrapper.ReadLine();
+            _consoleIoWrapper.ShowMessage($"Which file would you like to remove? ('{UserInput.Back}' for back)");
+            var input = _consoleIoWrapper.GetInput();
 
             while (input! != UserInput.Back)
             {
                 if (!int.TryParse(input, out _))
                 {
-                    _consoleWrapper.WriteLine("Id has to be a number!");
-                    input = _consoleWrapper.ReadLine();
+                    _consoleIoWrapper.ShowMessage("Id has to be a number!");
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
@@ -175,8 +175,8 @@ namespace PresentationLayer.UI
                 }
                 catch (DataSetDoesNotExistException)
                 {
-                    _consoleWrapper.WriteLine("File with this ID does not exist. Try again");
-                    input = _consoleWrapper.ReadLine();
+                    _consoleIoWrapper.ShowMessage("File with this ID does not exist. Try again");
+                    input = _consoleIoWrapper.GetInput();
                 }
             }
         }
@@ -186,8 +186,8 @@ namespace PresentationLayer.UI
 
             if (!emails.Any()) return;
 
-            _consoleWrapper.WriteLine("Daily notification email are being sent to the following emails:");
-            emails.ForEach(e => _consoleWrapper.WriteLine(e.Address));
+            _consoleIoWrapper.ShowMessage("Daily notification email are being sent to the following emails:");
+            emails.ForEach(e => _consoleIoWrapper.ShowMessage(e.Address));
                 
             var dataSets = await _dataSetService.GetAllDataSets();
             var holdingChanges = _diffComputer.ComputeDiff(dataSets[0], dataSets[1]);
@@ -195,17 +195,17 @@ namespace PresentationLayer.UI
             try
             {
                 _emailSender.SendNotification(holdingChanges, emails);
-                _consoleWrapper.WriteLine("Emails were sent successfully.");
+                _consoleIoWrapper.ShowMessage("Emails were sent successfully.");
             }
             catch (EmailSenderException e)
             {
-                _consoleWrapper.WriteLine(e.Message);
+                _consoleIoWrapper.ShowMessage(e.Message);
             }
 
-            _consoleWrapper.WriteLine($"(type '{UserInput.Back}' for back)");
-            var input = _consoleWrapper.ReadLine();
+            _consoleIoWrapper.ShowMessage($"(type '{UserInput.Back}' for back)");
+            var input = _consoleIoWrapper.GetInput();
             while (input! != UserInput.Back) {
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 

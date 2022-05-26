@@ -10,12 +10,12 @@ namespace PresentationLayer.UI
     public class EmailUi : BaseUi, IEmailUi
     {
         private readonly IUserEmailService _emailService;
-        private readonly IConsoleWrapper _consoleWrapper;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        public EmailUi(IUserEmailService emailService, IConsoleWrapper consoleWrapper) : base(consoleWrapper)
+        public EmailUi(IUserEmailService emailService, IConsoleIoWrapper consoleIoWrapper) : base(consoleIoWrapper)
         {
             _emailService = emailService;
-            _consoleWrapper = consoleWrapper;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public async Task Run() {
@@ -50,8 +50,8 @@ namespace PresentationLayer.UI
         }
         
         private async Task RegisterEmail() {
-            _consoleWrapper.WriteLine(Messages.RegisterEmail);
-            var input = _consoleWrapper.ReadLine();
+            _consoleIoWrapper.ShowMessage(Messages.RegisterEmail);
+            var input = _consoleIoWrapper.GetInput();
 
             if (input == null || input == UserInput.Back)
             {
@@ -62,50 +62,50 @@ namespace PresentationLayer.UI
             {
                 if (!IsValidEmailAddress(input))
                 {
-                    _consoleWrapper.WriteLine(Messages.InvalidEmailAddress);
+                    _consoleIoWrapper.ShowMessage(Messages.InvalidEmailAddress);
                 }
                 else
                 {
                     await _emailService.RegisterNewEmail(input);
-                    _consoleWrapper.WriteLine(Messages.InputAnotherEmailAddress);
+                    _consoleIoWrapper.ShowMessage(Messages.InputAnotherEmailAddress);
                 }
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
 
         private async Task ViewEmails() {
-            _consoleWrapper.WriteLine(Messages.ViewEmails);
+            _consoleIoWrapper.ShowMessage(Messages.ViewEmails);
             var emails = await _emailService.GetAllRegisteredEmails();
             foreach (var email in emails) {
-                _consoleWrapper.WriteLine(Messages.PrintEmail(email));
+                _consoleIoWrapper.ShowMessage(Messages.PrintEmail(email));
             }
         }
 
         private async Task DeleteEmail()
         {
-            _consoleWrapper.WriteLine(Messages.DeleteEmail);
-            var input = _consoleWrapper.ReadLine();
+            _consoleIoWrapper.ShowMessage(Messages.DeleteEmail);
+            var input = _consoleIoWrapper.GetInput();
             
             while (input! != UserInput.Back) {
 
                 if (!int.TryParse(input, out _))
                 {
-                    _consoleWrapper.WriteLine(Messages.InvalidIdFormat);
-                    input = _consoleWrapper.ReadLine();
+                    _consoleIoWrapper.ShowMessage(Messages.InvalidIdFormat);
+                    input = _consoleIoWrapper.GetInput();
                     continue;
                 }
 
                 try
                 {
                     await _emailService.RemoveEmail(int.Parse(input));
-                    _consoleWrapper.WriteLine(Messages.InputAnotherEmailId);
+                    _consoleIoWrapper.ShowMessage(Messages.InputAnotherEmailId);
                 }
                 catch (EmailDoesNotExistException)
                 {
-                    _consoleWrapper.WriteLine(Messages.EmailDoesNotExist);
+                    _consoleIoWrapper.ShowMessage(Messages.EmailDoesNotExist);
                 }
                 
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
         }
     }

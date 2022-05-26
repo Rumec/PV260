@@ -15,14 +15,14 @@ namespace Tests.PLTests.UITests;
 public class EmailUiTests
 {
 
-    private Mock<IConsoleWrapper> _consoleWrapper;
+    private Mock<IConsoleIoWrapper> _consoleWrapper;
     private Mock<IUserEmailService> _userMailService;
 
 
     [SetUp]
     public void Setup()
     {
-        _consoleWrapper = new Mock<IConsoleWrapper>();
+        _consoleWrapper = new Mock<IConsoleIoWrapper>();
         _userMailService = new Mock<IUserEmailService>();
     }
     
@@ -33,7 +33,7 @@ public class EmailUiTests
     public async Task TestRun_QuitImmediately(string userInput)
     {
         // arrange
-        _consoleWrapper.Setup(t => t.ReadLine())
+        _consoleWrapper.Setup(t => t.GetInput())
             .Returns(userInput);
         var emailUi = new EmailUi(_userMailService.Object, _consoleWrapper.Object);
         
@@ -41,9 +41,9 @@ public class EmailUiTests
         await emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
         
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
@@ -59,7 +59,7 @@ public class EmailUiTests
     public void TestRun_DeleteEmail_InvalidIdFormat_ThenQuit(string id)
     {
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.DeleteEmail)
             .Returns(id)
             .Returns(UserInput.Back)
@@ -70,14 +70,14 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidIdFormat), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidIdFormat), Times.Once);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
     }
     
     [Test]
@@ -87,7 +87,7 @@ public class EmailUiTests
         Assert.True(int.TryParse(id, out var parsedId));
 
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.DeleteEmail)
             .Returns(id)
             .Returns(UserInput.Back)
@@ -100,15 +100,15 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidIdFormat), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidIdFormat), Times.Never);
         _userMailService.Verify(t => t.RemoveEmail(parsedId), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.EmailDoesNotExist), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.EmailDoesNotExist), Times.Once);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
     }
     
     [Test]
@@ -118,7 +118,7 @@ public class EmailUiTests
         Assert.True(int.TryParse(id, out var parsedId));
         
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.DeleteEmail)
             .Returns(id)
             .Returns(UserInput.Back)
@@ -129,15 +129,15 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidIdFormat), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidIdFormat), Times.Never);
         _userMailService.Verify(t => t.RemoveEmail(parsedId), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.EmailDoesNotExist), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.EmailDoesNotExist), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
     }
     
     [Test]
@@ -149,7 +149,7 @@ public class EmailUiTests
         Assert.GreaterOrEqual(validIds.Length, 3);
 
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.DeleteEmail)
             .Returns(validIds[0])
             .Returns(validIds[1])
@@ -163,7 +163,7 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidIdFormat), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidIdFormat), Times.Once);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Exactly(3));
         
         foreach (var id in parsedIds)
@@ -171,13 +171,13 @@ public class EmailUiTests
             _userMailService.Verify(t => t.RemoveEmail(id), Times.Once);    
         }
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.EmailDoesNotExist), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.EmailDoesNotExist), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
     }
     
     
@@ -189,7 +189,7 @@ public class EmailUiTests
     public void TestRun_RegisterEmail_ValidEmail_ThenQuit(string email)
     {
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.RegisterEmail)
             .Returns(email)
             .Returns(UserInput.Back)
@@ -200,14 +200,14 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidEmailAddress), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidEmailAddress), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(email), Times.Once);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
     }
     
     [Test]
@@ -215,7 +215,7 @@ public class EmailUiTests
     public void TestRun_RegisterEmail_InvalidEmail_ThenQuit(string email)
     {
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.RegisterEmail)
             .Returns(email)
             .Returns(UserInput.Back)
@@ -227,14 +227,14 @@ public class EmailUiTests
         
         // assert
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidEmailAddress), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidEmailAddress), Times.Once);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
     }
     
     [Test]
@@ -242,7 +242,7 @@ public class EmailUiTests
     public void TestRun_RegisterEmail_InvalidEmail_ThenValidEmail_ThenQuit(string validEmail, string invalidEmail)
     {
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.RegisterEmail)
             .Returns(invalidEmail)
             .Returns(validEmail)
@@ -254,14 +254,14 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidEmailAddress), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidEmailAddress), Times.Once);
         _userMailService.Verify(t => t.RegisterNewEmail(validEmail), Times.Once);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
     }
     
     [Test]
@@ -271,7 +271,7 @@ public class EmailUiTests
         Assert.GreaterOrEqual(validEmails.Length, 3);
         
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.RegisterEmail)
             .Returns(validEmails[0])
             .Returns(validEmails[1])
@@ -285,7 +285,7 @@ public class EmailUiTests
         emailUi.Run();
         
         // assert
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.InvalidEmailAddress), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.InvalidEmailAddress), Times.Once);
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Exactly(3));
         
         foreach (var validEmail in validEmails)
@@ -296,9 +296,9 @@ public class EmailUiTests
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         _userMailService.Verify(t => t.GetAllRegisteredEmails(), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
     }
     
     // ------------------------[ ViewEmails tests ]-------------------------
@@ -307,7 +307,7 @@ public class EmailUiTests
     public void TestRun_ViewEmails_ThenQuit()
     {
         // arrange
-        _consoleWrapper.SetupSequence(t => t.ReadLine())
+        _consoleWrapper.SetupSequence(t => t.GetInput())
             .Returns(UserInput.ViewEmails)
             .Returns(UserInput.Quit);
         
@@ -328,15 +328,15 @@ public class EmailUiTests
         
         foreach (var email in emails)
         {
-            _consoleWrapper.Verify(t => t.WriteLine(Messages.PrintEmail(email)), Times.Once);
+            _consoleWrapper.Verify(t => t.ShowMessage(Messages.PrintEmail(email)), Times.Once);
         }
 
         _userMailService.Verify(t => t.RegisterNewEmail(It.IsAny<string>()), Times.Never);
         _userMailService.Verify(t => t.RemoveEmail(It.IsAny<int>()), Times.Never);
         
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.ViewEmails), Times.Once);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.RegisterEmail), Times.Never);
-        _consoleWrapper.Verify(t => t.WriteLine(Messages.DeleteEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.ViewEmails), Times.Once);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.RegisterEmail), Times.Never);
+        _consoleWrapper.Verify(t => t.ShowMessage(Messages.DeleteEmail), Times.Never);
     }
     
 }

@@ -7,17 +7,17 @@ namespace PresentationLayer
     {
         private readonly IEmailUi _emailUi;
         private readonly IDataSetUi _dataSetUi;
-        private readonly IConsoleWrapper _consoleWrapper;
+        private readonly IConsoleIoWrapper _consoleIoWrapper;
 
-        public App(IEmailUi emailUi, IDataSetUi dataSetUi, IConsoleWrapper consoleWrapper) {
+        public App(IEmailUi emailUi, IDataSetUi dataSetUi, IConsoleIoWrapper consoleIoWrapper) {
             _emailUi = emailUi;
             _dataSetUi = dataSetUi;
-            _consoleWrapper = consoleWrapper;
+            _consoleIoWrapper = consoleIoWrapper;
         }
 
         public void Run() {
             PrintMenu();
-            var input = _consoleWrapper.ReadLine();
+            var input = _consoleIoWrapper.GetInput();
             while (input! != UserInput.Quit) {
                 switch (input) {
                     case UserInput.DataSet:
@@ -28,17 +28,17 @@ namespace PresentationLayer
                         _emailUi.Run();
                         break;
                     default:
-                        _consoleWrapper.WriteLine(Messages.InvalidInput);
+                        _consoleIoWrapper.ShowMessage(Messages.InvalidInput);
                         break;
                 }
                 PrintMenu();
-                input = _consoleWrapper.ReadLine();
+                input = _consoleIoWrapper.GetInput();
             }
-            _consoleWrapper.WriteLine(Messages.Quitting);
+            _consoleIoWrapper.ShowMessage(Messages.Quitting);
         }
 
         private void PrintMenu() { 
-            _consoleWrapper.WriteLine(
+            _consoleIoWrapper.ShowMessage(
                 "What do you want to work with:\n" +
                 $"{UserInput.DataSet}: Data sets\n" +
                 $"{UserInput.Email}: Emails\n" +
