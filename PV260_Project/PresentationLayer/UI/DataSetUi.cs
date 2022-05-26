@@ -88,11 +88,12 @@ namespace PresentationLayer.UI
 
             while (input! != UserInput.Back)
             {
-                _consoleIoWrapper.ShowMessage($"Path: ('{UserInput.Back}' for back)");
+                _consoleIoWrapper.ShowMessage($"Url: ('{UserInput.Back}' for back)");
                 input = _consoleIoWrapper.GetInput();
                 try
                 {
                     var file = await _dataDownloader.LoadCsvFile(input!);
+                    
                     await _dataSetService.CreateDataSet(file);
                     return;
                 }

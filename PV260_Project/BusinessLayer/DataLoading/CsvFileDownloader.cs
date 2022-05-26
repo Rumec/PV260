@@ -20,7 +20,8 @@ public class CsvFileDownloader : IDataDownloader
         // File download
         try
         {
-            var responseMessage = await client.GetAsync(path);
+            //This bugs out if its written normally like 'await client.GetAsync(path)'... some issue with async methods in console app
+            var responseMessage = Task.Run( () =>  client.GetAsync(path)).Result;
             body = await responseMessage.Content.ReadAsStringAsync();
 
             if (!responseMessage.IsSuccessStatusCode)
